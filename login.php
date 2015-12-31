@@ -10,7 +10,7 @@
     ]);
 
     $helper = $fb->getRedirectLoginHelper();
-    $permissions = ['email', 'user_likes', 'user_work_history', 'user_education_history'];
+    $permissions = ['email', 'user_likes', 'user_work_history', 'user_education_history', 'user_birthday'];
     $loginUrl = $helper->getLoginUrl('http://localhost/sma/login-callback.php', $permissions);
 
     echo '<a href="'.$loginUrl.'">Login with Facebook</a>';
