@@ -1,8 +1,9 @@
 <?php
-
 	session_start();
 
-	require_once 'Facebook/autoload.php';
+	require_once __DIR__ . '/vendor/autoload.php';
+
+
 
 	$fb = new Facebook\Facebook([
 		'app_id' => '1662017130721013',
@@ -23,9 +24,35 @@
 
 	$user = $response->getGraphUser();
 
+	function databaseQuery($con, $query) {
+
+		if (!$result = mysqli_query($con, $query)) {
+			echo "Query error ".mysqli_error($con);
+		}
+		return $result;
+	}
+
+
+	function checkUserIdExists($con, $UserNode) {
+		$query = "SELECT count(1) FROM users WHERE UserID = ".$UserNode['id'].";";
+		$result = databaseQuery($con, $query);
+		$row = mysqli_fetch_row($result);	
+
+		if (intval($row[0]) == 0) {
+
+			echo "Added user to database";
+			$query = "INSERT INTO users VALUES('".$UserNode['id']."', '".$UserNode['name']."', '".$UserNode['birthday']->format('Y-m-d')."', '".$UserNode['gender']."', '".$UserNode['education'][0]['school']['name']."');";
+			databaseQuery($con, $query);
+
+		} else {
+			echo "User is already in database";
+		}
+	}
+
+
 	// we can store userdata in database and access it later to compare it with other users, below is a small example
 	
-	$con = mysqli_connect("127.0.0.1", "root", "secret", "sma");
+	$con = mysqli_connect("127.0.0.1", "root", "", "sma");
 
 	if (!$con) {
 		echo "Error connection to database ".mysqli_connect_error();
@@ -34,15 +61,9 @@
 	for the prototype, we could start comparing their education to see if they are classmates or not
 	here is an image of how this data is stored in the database: http://i.imgur.com/PYAzgB2.png (my profile used as an example) */
 
-	$query = "INSERT INTO users VALUES('".$user['id']."', '".$user['name']."', '".$user['birthday']->format('Y-m-d')."', '".$user['gender']."', '".$user['education'][0]['school']['name']."');";
-	
-	if (!mysqli_query($con, $query)) {
-		echo ("Query error ".mysqli_error($con));
-	}
-
+	checkUserIdExists($con, $user);
 
 	echo "<h1>Sucessfully connected to the database</h1>";
+
 	
-
-
 ?>
