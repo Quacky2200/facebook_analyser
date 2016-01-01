@@ -27,27 +27,32 @@
 	while($userDetails = mysqli_fetch_row($result)) {
 
 		$UserID = $userDetails[0];
-		$UserName = 
-		$userDetails[1];
-		$UserBirthday = $userDetails[2];
-		$UserGender = $userDetails[3];
 		$UserEducation = $userDetails[4];
 
-		//array
+
+		$UserDetails = array(
+
+			                $UserID => array(
+			                	            $UserEducation = compareEducation($cUserEducation, $UserEducation),
+			                	            ),
+
+			                );
+
+
+		array_push($databaseUsers, $UserDetails);
 
 	}
 
+		
+	echo "<pre>";
+	var_dump($databaseUsers);
+	echo "</pre>";	
 
 
-
-
-	function compareEducation($cUserEducation) {
-		$UserEducation = $_SESSION['current_user'];
-		$query = "SELECT * FROM users WHERE UserEducation = '$cUserEducation';";
-		echo $query;
+	function compareEducation($cUserEducation, $UserEducation) {
+		$result = ($cUserEducation == $UserEducation ? 1 : 0);
+		return $result;
 	}
-
-	compareEducation($cUserEducation);
-
+ 
 
 ?>
