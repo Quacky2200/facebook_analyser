@@ -1,5 +1,5 @@
 <?php
-	//THIS CLASS DOESNT WORK YET!!
+	
 	/* Main class that compares current userdata to data in
 	   the database and categorises users in the database as 
 	   friends/family/strangers etc.. */
