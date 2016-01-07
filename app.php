@@ -42,7 +42,9 @@
 
     for ($i = 0; $i < count($databaseUsers); $i++) {
         echo "<pre>";
-        print_r($databaseUsers[$i]);
+        if ($databaseUsers[$i][2][1] == 1) {
+            echo $databaseUsers." goes to the same university as you!";
+        }
         echo "</pre>";
     }
 
