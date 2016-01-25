@@ -20,7 +20,7 @@ class ErrorHandler{
 	public static function exceptionHandler($errno, $errstr, $errfile, $errline){
 		ob_clean();
 		$errorCase = array(E_WARNING=>"Warning!", E_ERROR=>"Error!", E_USER_ERROR=>"User Error", E_USER_WARNING=>"User Warning", E_USER_NOTICE=>"User Notice");
-		self::primitiveError(500, (array_key_exists($errno, $errorCase) ? $errorCase[$errno] : "Unknown:- "), $errstr . "<br/>Line " . $errline . " in " . $errfile);
+		self::primitiveError(500, (array_key_exists($errno, $errorCase) ? $errorCase[$errno] : "An unknown error occurred"), $errstr . "<br/>Line " . $errline . " in " . $errfile);
 	}
 	public static function fatalHandler(){
 		$error = error_get_last();

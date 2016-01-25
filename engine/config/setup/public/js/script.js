@@ -1,61 +1,48 @@
 document.createElement('slides');
 document.createElement('slide');
 $(document).ready(function(){
-	for(var i = 0; i < document.getElementsByTagName('select'); i++){
-		document.getElementsByTagName('select')[i].disabled = false;
-	}
-	$('div.SlideControls input[value="Next"]').click(function(obj){
+	//When clicking on previous or next
+	$('div.SlideControls input[type="submit"]').click(function(obj){
 		var currentSlide = $(this).closest('slide');
 		var currentSlideIndex = $('slides slide').index(currentSlide);
-		if($(this).attr('type').toLowerCase() == 'submit'){
-			var data = {};
-			$('slides slide:eq(' + currentSlideIndex + ') section div').children('input').each(function(){
-				if($(this).attr('name')){
-					data[$(this).attr('name')] = $(this).attr('value');
-				}
-			});
-			$.ajax({
+		if($(this).attr("value").toLowerCase() == "previous"){
+			if((currentSlideIndex - 1) >= 0){
+				$('slides slide:eq(' + (currentSlideIndex - 1) + ')').attr('class', 'active');
+				currentSlide.attr('class', '');
+			}
+		} else {
+			var serialized = $(this).closest('form').serializeArray();
+			serialized.push({name:this.name, value:this.value});
+		  	$.ajax({
 				type: "POST",
-				data: data,
+				data: serialized,
 				url: window.location,
 				success: function(msg){
-					alert(msg);
-					if(msg == ''){
-						$('slides slide:eq(' + (currentSlideIndex + 1) + ')').attr('class', 'active');
-						currentSlide.attr('class', 'done');
-					}
-					else{
-						//try{
-						console.log(msg);
-						var p = JSON.parse(msg);
+					var p = JSON.parse(msg);
+					if(p["status"] == "ok"){
+						if(p["details"] != null){
+							window.location = p["details"];
+						} else {
+							$('slides slide:eq(' + (currentSlideIndex + 1) + ')').attr('class', 'active');
+							$('slides slide:eq(' + (currentSlideIndex) + ') *.input.error').slideUp();
+							currentSlide.attr('class', 'done');
+						}
+					} else if(p["status"] == "error"){
 						$('*.input.error').each(function(){
-							for(x in p){
-								if($(this).attr('class').indexOf(p[x]) > 0){
-									if($('slides slide:eq(' + currentSlideIndex + ') section div input[name="' + p[x] + '"][type="submit"]').length === 1){
-										$('*.input.error.' + p[x] + ' .details').remove();
-										$('*.input.error.' + p[x]).append('<div class="details">' + p['details'] + '</div>');
-									}
-									$('*.input.error.' + p[x]).slideDown();
+							for(x in p["details"]){
+								if($(this).attr('class').indexOf(p["details"][x]) > 0){
+									$('*.input.error.' + p["details"][x]).slideDown();
 									return null;
 								}
 							}
 							$(this).slideUp();
 						});
+					} else {
+						alert("Unknown JSON Action: " . p);
 					}
 				}
 			});
 		}
-		else{
-			$('slides slide:eq(' + (currentSlideIndex + 1) + ')').attr('class', 'active');
-			currentSlide.attr('class', 'done');
-		}
-		return false;
-	});
-	$('div.SlideControls input[value="Previous"]').click(function(obj){
-		var currentSlide = $(this).closest('slide');
-		var currentSlideIndex = $('slides slide').index(currentSlide);
-		$('slides slide:eq(' + (currentSlideIndex - 1) + ')').attr('class', 'active');
-		currentSlide.attr('class', '');
 		return false;
 	});
 });

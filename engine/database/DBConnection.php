@@ -16,7 +16,7 @@ class DBConnection{
 		$this->DB_HOST = $DB_HOST;
 		$this->DB_NAME = $DB_NAME;
 		//Try connecting to the database
-		$this->conection = mysqli_connect('p:' . $DB_HOST, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
+		$this->connection = mysqli_connect('p:' . $DB_HOST, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
 		//If we cannot connect
 		if(mysqli_connect_errno($this->connection)){
 			//Move no further

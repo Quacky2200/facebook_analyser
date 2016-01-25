@@ -48,9 +48,8 @@ class DatabaseSetup extends SetupChapter{
 			Engine::getConfig()->DB_NAME = $name;
 			Engine::getConfig()->setConfigFilename(TEMP_CONFIG_FILE);
 			Engine::getConfig()->save(true);
-			$this->sendSuccess();
 		} else {
-			$this->sendFail(array($this->addName("error")));
+			$this->sendStatus(true, array($this->addName("error")));
 		}
 
 	}

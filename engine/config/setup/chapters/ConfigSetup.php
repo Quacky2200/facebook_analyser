@@ -29,11 +29,10 @@ RewriteRule \.(jp[e]?g|gif|png|css|js|ttf|woff|ico|bmp|pdf|doc[x]?)$ - [L]
 RewriteCond %{REQUEST_FILENAME} !(.*)/index\.php$
 RewriteRule ^.*$ index.php?current_engine_page=$0 [L,NC,QSA]");
 		$Config->save(true);
-	} catch (Exception $e){
-		$this->sendFail(array($this->addName('write-error')));
-		exit();
-	}
-		$this->sendSuccess();
+		} catch (Exception $e){
+			$this->sendStatus(true, array($this->addName('write-error')));
+			exit();
+		}
 	}
 	public function getElements(){
 		return array(

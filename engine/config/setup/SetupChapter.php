@@ -26,13 +26,9 @@ abstract class SetupChapter extends Element{
 		return $this->getName() . '-' . $name;
 	}
 	public $SlideControls;
-	public function sendFail($failures){
+	public function sendStatus($failed = false, $details = null){
 		ob_clean();
-		die(json_encode($failures));
-	}
-	public function sendSuccess(){
-		ob_clean();
-		die();
+		die(json_encode(array("status"=>($failed ? "error" : "ok"), "details"=>$details)));
 	}
 	public function __construct($name, $headerName, $headerDescription){
 		//Name to use on submit form
@@ -45,14 +41,17 @@ abstract class SetupChapter extends Element{
 		//Load onSubmit if we have POST'd
 		if(isset($_POST[$this->name])){
 			$this->onSubmit();
+			$this->sendStatus();
 		}
 		parent::__construct("slide", null, array(
-			new Element("section", null, array(
-				new Element("div", null, array(
-					new Element("h1", null, $this->headerName),
-					new Element("p", null, $this->headerDescription),
-					$this->getElements(),
-					$this->SlideControls
+			new Element("form", array("method"=>"post"), array(
+				new Element("section", null, array(
+					new Element("div", null, array(
+						new Element("h1", null, $this->headerName),
+						new Element("p", null, $this->headerDescription),
+						$this->getElements(),
+						$this->SlideControls
+					))
 				))
 			))
 		));

@@ -1,13 +1,12 @@
 <?php
+define("CONFIG", dirname(__FILE__) . "/config/config-data.json");
 try{
-	$self = dirname(__FILE__);
-	Engine::requireAllInDir($self . "/database/");
-	Engine::requireAllInDir($self . "/config/");
-	Engine::requireAllInDir($self . "/structure/");
+	Engine::requireAllInDir(__DIR__ . "/database/");
+	Engine::requireAllInDir(__DIR__ . "/config/");
+	Engine::requireAllInDir(__DIR__ . "/structure/");
 } catch (Exception $e){
 	ErrorHandler::primitiveError(500, "Cannot load Engine libraries", $e->getMessage());
 }
-define("CONFIG", dirname(__FILE__) . "/config/config-data.json");
 class Engine{
 	private $currentTemplate;
 	public function __construct(){
@@ -15,16 +14,18 @@ class Engine{
 			$this->startSession();
 			$this->getRequiredVersion();
 			if(!$this->getConfig()->configExists()){
-				$this->currentTemplate = self::getTemplate('setup');
-				$this->useTemplate($this->currentTemplate);
+				$this->currentTemplate = Engine::requireFile(__DIR__ . "/config/setup/main.php");
 				$this->run();
 				exit(0);
 			}
+			$this->getConfig()->open();
+			DBConnection::connectToDB($this->getConfig()->DB_HOST, $this->getConfig()->DB_USERNAME, $this->getConfig()->DB_PASSWORD, $this->getConfig()->DB_NAME);
+			$this->currentTemplate = null;
 			$_GET = $this->returnProtectedGETVariables();
 			$_POST = $this->returnProtectedPOSTVariables();	
 			$currentTemplate = self::getTemplate($this->getConfig()->TEMPLATE);
 			$this->useTemplate($currentTemplate);
-			$this->run();	
+			$this->run();
 		} catch(Exception $e){
 			ErrorHandler::primitiveError(500, "Cannot initiate Engine", $e->getMessage());
 		}
@@ -44,7 +45,7 @@ class Engine{
 	public static function requireAllInDir($dir){
 		$returnedFiles = array();
 		foreach(glob($dir . "*.php") as $filename){
-			array_push($returnedFiles, self::requireFile($filename));
+			array_push($returnedFiles, self::requireFile(realpath($filename)));
 		}
 		return $returnedFiles;
 	}
@@ -86,7 +87,7 @@ class Engine{
 	}
 	public function useTemplate($filename){
 		$template = self::requireFile($filename);
-		if($template instanceof Template && in_array(realpath($filename), self::getTemplates())){
+		if($template instanceof Template){
 			$this->currentTemplate = $template;
 		} else if (!($template instanceof Template)){
 			ErrorHandler::primitiveError(500, "Cannot initiate Template", $filename . "<br/>File above must use the Template class.");
@@ -100,9 +101,8 @@ class Engine{
 		return $paths;
 	}
 	public static function getTemplate($Name){
-		$findFileResults = glob(self::getLocalDir() . "/templates/" . $Name . "/main.php");
-		$filename = reset($findFileResults);
-		return ($filename !== false && file_exists($filename) ? $filename : null);
+		$find = __DIR__ . "/templates/" . $Name . "/main.php";
+		return (file_exists($find) ? $find : null);
 	}
 	public function run(){
 		try{

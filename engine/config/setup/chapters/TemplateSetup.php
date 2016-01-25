@@ -5,27 +5,23 @@ class TemplateSetup extends SetupChapter{
 	}
 	public function onLoad(){
 		//If the template is from one of the templates then ignore
-		if($this->testTemplate(basename(dirname(Engine::getConfig()->TEMPLATE)))) {
-			$this->setEnabled(false);
+		$Config = new Config(TEMP_CONFIG_FILE, false);
+		if($Config->configExists()){
+			if(!is_null($Config->TEMPLATE) && $this->testTemplate($Config->TEMPLATE)){
+				$this->setEnabled(false);
+			}
 		}
-	}
-	private function getTemplates(){
-		$templates = Engine::getTemplates();
-		$me = realpath(__DIR__ . "/../main.php");
-		$getKey = array_search($me, $templates);
-		unset($templates[$getKey]);	
-		return $templates;
 	}
 	private function testTemplate($templateName){
 		return Engine::getTemplate($templateName) !== null;
 	}
 	private function getTemplateOptions(){
-		$templates = $this->getTemplates();
-		$elements = array(new Element("option", array(""), "Select a Template"));
+		$templates = Engine::getTemplates();
+		$elements = array();
 		if(is_array($templates)){
 			foreach($templates as $template){
 				$name = basename(dirname($template));
-				array_push($elements, new Element("option", array("name="=>$this->addName("testing"), "value"=>$name), $name));
+				array_push($elements, new Element("option", null, $name));
 			}
 			return $elements;
 		}
@@ -34,20 +30,18 @@ class TemplateSetup extends SetupChapter{
 	public function getElements(){
 		return array(
 			new Element("p", array("class"=>"input error " . $this->addName("error")), "Cannot select this Template. Please select another"),
-			//new Element("h3", null, "Select Template"),
-			new Element("select", array("name"=>$this->addName("testing")), $this->getTemplateOptions()),
+			new Element("select", array("name"=>$this->addName("options")), $this->getTemplateOptions()),
 		);
 	}
 	public function onSubmit(){
-		var_dump($_POST[$this->addName("testing")]);
-		die();
-		// $templateName = $_POST[$this->addName("option")];
-		// if($this->testTemplate($templateName) === true){
-		// 	Engine::getConfig()->TEMPLATE = $templateName;
-		// 	$this->sendSuccess();
-		// } else {
-		// 	$this->sendFail(array($this->addName("error")));
-		// }
+		$templateName = $_POST[$this->addName("options")];
+		if($this->testTemplate($templateName) === true){
+			$Config = new Config(TEMP_CONFIG_FILE);
+			$Config->TEMPLATE = $templateName;
+			$Config->save(true);
+		} else {
+			$this->sendSuccess(true, array($this->addName("error")));
+		}
 	}
 }
 ?>

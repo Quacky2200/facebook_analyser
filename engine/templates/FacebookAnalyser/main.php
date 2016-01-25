@@ -1,5 +1,6 @@
 <?php
-
+require('Home.php');
+require('Authentication.php');
 class FacebookAnaylser extends Template{
 	public function getName(){
 		return __CLASS__;
@@ -24,37 +25,5 @@ class FacebookAnaylser extends Template{
 		);
 	}
 }
-/*
-	*Temporary*
-	Waiting to find a new home
-*/
-class Home extends Page{
-	public function getName(){
-		return __CLASS__;
-	}
-	public function getURLRegex(){
-		return "/^(Home)$/"
-	}
-	public function run($Template){
-		echo $this->getName() . "->(Run code)";
-	}
-	public function show($Template){
-		echo "<br/>" . $this->getName() , "->(Show template)";
-	}
-}
-class Authentication extends Page{
-	public function getName(){
-		return "Login";
-	}
-	public function getURLRegex(){
-		return "/^(Login)$/"
-	}
-	public function run($Template){
-		echo $this->getName() . "->(Run code)";
-	}
-	public function show($Template){
-		echo "<br/>" . $this->getName() . "->(Show template)";
-	}
-}
-return new Setup();
+return new FacebookAnaylser();
 ?>
