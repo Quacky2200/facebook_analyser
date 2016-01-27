@@ -61,6 +61,13 @@ class Engine{
 		$replaceSlashes = str_replace('\\', '/', $replacePath);
 		return $replaceSlashes;
 	}
+	public static function getRemoteAbsolutePath($path){
+		return (self::isSecure() ? "https://" : "http://") . $_SERVER['HTTP_HOST'] . Engine::getRemoteDir($path);
+	}
+	public static function isSecure(){
+		//Thank you to this answer: http://stackoverflow.com/questions/1175096/how-to-find-out-if-youre-using-https-without-serverhttps#answer-2886224
+		return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
+	}
 	public static function fixPath($path){
 		//Return a path that has missing starting and ending slashes
 		$path = (self::startsWith($path, '/') ? $path : '/' . $path);

@@ -5,16 +5,19 @@ class SetupDialog extends Page{
 	public function getName(){
 		return "Welcome";
 	}
-	public function getURLRegex(){
-		return "/^(.*)$/";
+	public function getURL(){
+		return "/";
 	}
-	public function run($Template){
+	public function isMatch($URL){
+		return preg_match("/^(.*)$/", $URL);
+	}
+	public function run($template){
 		if(file_exists(TEMP_CONFIG_FILE)){
 			Engine::getConfig()->setConfigFilename(TEMP_CONFIG_FILE);
 			Engine::getConfig()->open();
 		}
 	}
-	public function show($Template){
+	public function show($template){
 		require('views/header.php');
 		$chapters = $this->getAllChaptersHTML();
 		$slides = new Element("slides", null, $chapters);

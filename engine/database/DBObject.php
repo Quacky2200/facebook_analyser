@@ -20,5 +20,15 @@ class DBObject{
 	public function exportToJSON($ignoreNullValues = true){
 		return json_encode($this->export($ignoreNullValues));
 	}
+	public function importFromJSON($JSONString){
+		$JSONObject = json_decode($JSONString);
+		
+		foreach($JSONObject as $key=>$value){
+			$this->$key = $value;
+		}
+	}
+	public function import(){
+		//$DBObjectData = $this->get()
+	}
 }
 ?>

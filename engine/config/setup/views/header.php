@@ -1,19 +1,19 @@
 <html>
 <head>
 	<?php
-	echo $this->getGeneratedTitle($Template, true);
+	echo $this->getGeneratedTitle($template, true);
 	//Assume we're in our public directory.
-	$Template->addMultipleCSS(array(
+	$template->addMultipleCSS(array(
 		"css/opensans/stylesheet.css",
 		"css/main.css"
 	), true);
-	$Template->addMultipleJS(array(
+	$template->addMultipleJS(array(
 		"js/jquery-1.11.2.min.js",
 		"js/jquery-1.11.2.min.js",
 		"js/jquery-migrate-1.2.1.min.js",
 		"js/script.js"
 	), true);
-	$Template->echoCSSAndJSDependencies();
+	$template->echoCSSAndJSDependencies();
 	?>
 </head>
 <body>

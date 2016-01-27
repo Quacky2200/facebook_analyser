@@ -44,12 +44,12 @@ abstract class Template{
 	public final function getCSSAndJSDependencies($appendTemplateDefaultPublicDirectory = true){
 		$values = array();
 		foreach($this->CSS as $value){
-			$url = ($appendTemplateDefaultPublicDirectory ? $this->getLocalDir() . '/public/' . $value : $value);
-			array_push($values, "<link href='" . Engine::getRemoteDir($url) . "' rel='stylesheet' type='type/css'/>");
+			$url = (strpos($value, "http://") > -1 || strpos($value, "https://") > -1 ? $value : Engine::getRemoteDir(($appendTemplateDefaultPublicDirectory ? $this->getLocalDir() . '/public/' . $value : $value)));
+			array_push($values, "<link href='" . $url . "' rel='stylesheet' type='type/css'/>");
 		}
 		foreach($this->JS as $value){
-			$url = ($appendTemplateDefaultPublicDirectory ? $this->getLocalDir() . '/public/' . $value : $value);
-			array_push($values, "<script src='" . Engine::getRemoteDir($url) . "'></script>");
+			$url = (strpos($value, "http:") > -1 || strpos($value, "https://") > -1 ? $value : Engine::getRemoteDir(($appendTemplateDefaultPublicDirectory ? $this->getLocalDir() . '/public/' . $value : $value)));
+			array_push($values, "<script src='" . $url . "'></script>");
 		}
 		return $values;
 	}
@@ -64,7 +64,7 @@ abstract class Template{
 	}
 	private function callPage($URL, $Page){
 		if(!is_null($Page)){
-			$Page->setURL($URL);
+			//$Page->setURL($URL);
 			$Page->run($this);
 			$Page->show($this);
 		} else {
@@ -74,7 +74,7 @@ abstract class Template{
 	public final function traverse($URL){
 		if (!is_null($this->pages) and $this->pages !== false){
 			foreach($this->pages as $Page){
-				if(preg_match($Page->getURLRegex(), $URL)){
+				if($Page->isMatch($URL)){
 					try{
 						$this->callPage($URL, $Page);
 						exit();

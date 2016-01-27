@@ -1,7 +1,9 @@
 <?php
+require('SDK.php');
 require('Home.php');
-require('Authentication.php');
-class FacebookAnaylser extends Template{
+require('User.php');
+require('Analyse.php');
+class FacebookAnalyser extends Template{
 	public function getName(){
 		return __CLASS__;
 	}
@@ -21,9 +23,9 @@ class FacebookAnaylser extends Template{
 	public function getPages(){
 		return array(
 			new Home(),
-			new Authentication()
+			new Analyse()
 		);
 	}
 }
-return new FacebookAnaylser();
-?>
+return new FacebookAnalyser();
+?>s
