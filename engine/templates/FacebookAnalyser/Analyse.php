@@ -22,19 +22,6 @@ class Analyse extends Page{
 			exit();
 		}
 	}
-	public function tempRecursive($obj){
-		$stuff = null;
-		foreach($obj as $key=>$value){
-			if(is_array($value)){
-				$stuff .= "\n$key:" . $this->tempRecursive($value);
-			} else if(is_object($obj)){
-				$stuff .= "\n$key:" . $this->tempRecursive(get_object_vars($this));
-			} else {
-				$stuff .= "\n\t$key: $value;";
-			}
-		}
-		return $stuff;
-	}
 	public function show($template){
 		include(__DIR__ . '/views/header.php');
 		echo "<h1>Start trying to do things with FB and the analysis part...</h1>";
