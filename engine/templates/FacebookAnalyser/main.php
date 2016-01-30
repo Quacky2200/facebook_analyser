@@ -28,4 +28,4 @@ class FacebookAnalyser extends Template{
 	}
 }
 return new FacebookAnalyser();
-?>s
+?>

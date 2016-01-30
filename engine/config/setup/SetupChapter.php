@@ -50,8 +50,12 @@ abstract class SetupChapter extends Element{
 						new Element("h1", null, $this->headerName),
 						new Element("p", null, $this->headerDescription),
 						$this->getElements(),
-						$this->SlideControls
-					))
+						$this->SlideControls,
+						new Element("section", array("class"=>"ajax"), new Element("div", null, new Element("div", null, array(
+							new Element("div", array("class"=>"loader")),
+							new Element("h1", null, "Working on it...")
+						))))
+					)), 
 				))
 			))
 		));

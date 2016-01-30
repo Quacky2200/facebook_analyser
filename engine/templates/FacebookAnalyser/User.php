@@ -1,8 +1,6 @@
 <?php
 class User extends DBObject{
-	public $id, $name, $gender, $birthday, $education;//, $username, $email, $languages, $locale, $timezone, $gender, $location, $hometown;
-	private static $permissions = ["email", "user_likes", "user_work_history", "user_education_history", "user_birthday"];
-	//user_about_me, user_birthday, user_friends, user_likes, user_photos, user_relationships, user_tagged_places, user_work_history, user_education_history, user_games_activity, user_location, user_posts, user_videos, user_events, user_hometown, user_relationship_details, user_status, user_website, user_religion_politics, email
+	public $id, $name, $email;
 	public static function instance(){
 		static $instance;
 		if(is_null($instance)){
@@ -26,34 +24,64 @@ class User extends DBObject{
 			throw new Exception("Facebook SDK returned an error: " . $e->getMessage());
 		}
 		//Assuming it went well, let's process our login state
-		if(isset($accessToken) && is_null($this->getToken())){
-			$this->setToken((string)$accessToken);
-			return true;
-		} else if(isset($accessToken) && !is_null($this->getToken())){
-			return true;
-		} else if(!isset($accessToken) && !is_null($this->getToken())){
+		if(!is_null($this->getToken()) || isset($accessToken)){
+			//This if statements means that it doesn't matter if the session token is set or not, 
+			//as long as we have the access token either by request or by session, we can use the session
+			if(is_null($this->getToken())) $this->setToken((string)$accessToken);
+			//Get basic user profile information such as user id, name and email to test whether the session works
+			$this->importFromJson($this->getBasicUserProfile()->getGraphUser());
 			return true;
 		} else {
 			return false;
 		}
 	}
-	public function loadProfile(){
-		if ($this->isLoggedIn()){
-			//Load profile
-			//Get this instead...
-			//me?fields=id,name,birthday,photos{tags},videos{tags},likes{about,artists_we_like,attire,awards,band_interests,bio,app_id,name,name_with_location_descriptor},tagged,work,posts.include_hidden(true){privacy,place,actions,name,description},friends{about,address,age_range,birthday,education,email},about,education,age_range,email,hometown,relationship_status,religion,gender,bio,music{name},movies{name},books{name}
-			$response = SDK::instance()->facebook->get('/me?fields=id,name,gender,birthday,work,education', $this->getToken());
-			$this->importFromJson($response->getGraphUser());
-			//Load was successful
-			return true;
-		} elseif(SDK::instance()->helper->getError()) {
-			throw new Exception(var_dump(SDK::instance()->helper->getError()));
-		}
-		//Couldn't get anything
-		return false;
-	}
 	public function getFacebookAuthURL($URL){
-		return SDK::instance()->helper->getLoginURL($URL, self::$permissions);
+		/*
+			Make a login callback, by specifying the url to the SDK. For Example, 
+			when a user clicks on the FB login button, they are redirected to FB
+			for authentication. When the authentication is complete, FB will 
+			redirect the user back to our website and our website will then 
+			contain the session the user created.
+		*/
+		return SDK::instance()->helper->getLoginURL($URL, SDK::instance()->permissions);
+	}
+	public function getUserLikes(){
+		return $this->getFacebookData("likes{about,artists_we_like,attire,awards,band_interests,bio,app_id,name,name_with_location_descriptor}");
+	}
+	public function getUserPosts(){
+		return $this->getFacebookData("posts.include_hidden(true){privacy,place,actions,name,description}");
+	}
+	public function getUserPhotos(){
+		return $this->getFacebookData("photos{tags}");
+	}
+	public function getUserVideos(){
+		return $this->getFacebookData("videos{tags}");
+	}
+	public function getUserTagged(){
+		return $this->getFacebookData("tagged");
+	}
+	public function getUserFriends(){
+		return $this->getFacebookData("friends{about,address,age_range,birthday,education,email}");
+	}
+	public function getUserMovies(){
+		return $this->getFacebookData("movies{name}");
+	}
+	public function getUserMusic(){
+		return $this->getFacebookData("music{name}");
+	}
+	public function getUserBooks(){
+		return $this->getFacebookData("books{name}");
+	}
+	public function getBasicUserProfile(){
+		return $this->getFacebookData("id,name,email");
+	}
+	public function getUserProfile(){
+		return $this->getFacebookData("id,name,email,gender,age_range,birthday,about,work,education,hometown,relationship_status,religion,bio");
+	}
+	public function getFacebookData($fields){
+		//Allow other classes to get Facebook Data if they require it, rather than 
+		//restricting it to the data we get from the functions
+		return SDK::instance()->facebook->get("me?fields=$fields", $this->getToken());
 	}
 }
 

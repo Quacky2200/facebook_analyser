@@ -43,8 +43,7 @@ class Config{
 	}
 	public function save($overwrite = false){
 		if($overwrite || (!file_exists(self::$configFilename) && !$overwrite)){
-			file_put_contents(self::$configFilename, json_encode(get_object_vars($this), JSON_PRETTY_PRINT), LOCK_EX);
-			return true;
+			return file_put_contents(self::$configFilename, json_encode(get_object_vars($this), JSON_PRETTY_PRINT), LOCK_EX);
 		}
 		else{
 			return false;

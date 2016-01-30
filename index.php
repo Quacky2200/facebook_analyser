@@ -39,6 +39,8 @@ class ErrorHandler{
 	public static function stop(){
 		self::$Enabled = false;
 		error_reporting(E_ALL);
+		restore_error_handler();
+		register_shutdown_function("exit");
 	}
 }
 ErrorHandler::start();

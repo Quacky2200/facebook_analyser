@@ -30,26 +30,6 @@ class Element{
 		} else {
 			$HTML .= ">";
 			$HTML .= $this->recurseElements($this->elements);
-			// if(is_array($this->elements)){
-			// 	foreach ($this->elements as $item){
-			// 		if(is_subclass_of($item, 'Element') || $item instanceof Element){
-			// 			$HTML .= $item->toHTML();
-			// 		} else {
-			// 			var_dump($item);
-			// 			// try{
-			// 			// 	$HTML .= $item;
-			// 			// } catch (Exception $e){
-			// 			// 	throw new Exception("Non-Element cannot be converted to HTML");
-			// 			// }
-			// 		}
-			// 	}
-			// } else {
-			// 	try{
-			// 		$HTML .= (string)$this->elements;
-			// 	} catch (Exception $e){
-			// 		throw new Exception("Non-Element cannot be converted to HTML");
-			// 	}
-			// }
 			return $HTML . "</" . $this->tagname . '>';
 		}
 	}
