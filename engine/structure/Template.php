@@ -1,29 +1,11 @@
 <?php
 abstract class Template{
-	//error500Page only executed on Page code errors!
-	public $error404Page, $error500Page;
 	private $CSS, $JS;
 	private $pages;
 	public function __construct(){
 		$this->pages = $this->getPages();
-		$this->checkAllPageAuthenticity();
 		$this->CSS = array();
 		$this->JS = array();
-	}
-	private function checkAllPageAuthenticity(){
-		$i = 0;
-		$count = count($this->pages);
-		if(!is_null($this->pages) && $this->pages !== false){
-			foreach($this->pages as $Page){
-				if(!($Page instanceof Page)){
-					throw new Exception("Page $i of $count is NOT a Page class.");
-					exit();
-				}
-				$i++;
-			}
-		} else {
-			throw new Exception("No pages available");
-		}
 	}
 	public final function addCSS($filename){
 		return array_push($this->CSS, $filename);
@@ -38,7 +20,6 @@ abstract class Template{
 		$this->JS = array_unique(array_merge($this->JS, $Multiple));;
 	}
 	public abstract function getPages();
-	public abstract function getKudos();
 	public abstract function getName();
 	//Return array of CSS and JS Dependencies
 	public final function getCSSAndJSDependencies($appendTemplateDefaultPublicDirectory = true){
@@ -62,40 +43,21 @@ abstract class Template{
 		$reflectionClass = new ReflectionClass(get_class($this));
 		return dirname($reflectionClass->getFileName());
 	}
-	private function callPage($URL, $Page){
-		if(!is_null($Page)){
-			//$Page->setURL($URL);
-			$Page->run($this);
-			$Page->show($this);
-		} else {
-			throw new Exception("Selected page was null.");
-		}
-	}
 	public final function traverse($URL){
 		if (!is_null($this->pages) and $this->pages !== false){
 			foreach($this->pages as $Page){
-				if($Page->isMatch($URL)){
+				if(!is_null($Page) && $Page instanceof Page && $Page->isMatch($URL)){
 					try{
-						$this->callPage($URL, $Page);
+						$Page->run($this);
+						$Page->show($this);
 						exit();
 					} catch (Exception $e){
-						if(!is_null($this->error500Page) && $this->error500Page instanceof Page){
-							$this->callPage($URL, $this->error500Page);
-						}
-						else{
-							ErrorHandler::primitiveError(500, "Page script error", $e->getMessage());
-						}
+						ErrorHandler::primitiveError(500, "Page script error", $e->getMessage());
 					}
 				}
 			}
 		}
-		if(!is_null($this->error404Page) && $this->error404Page instanceof Page){
-			$this->callPage($URL, $Page);
-		}
-		else{
-			ErrorHandler::primitiveError(404, "Page not found", "Cannot find any pages with this URL.");
-		}
-
+		ErrorHandler::primitiveError(404, "Page not found", "Cannot find any pages with this URL.");
 	}
 }
 ?>

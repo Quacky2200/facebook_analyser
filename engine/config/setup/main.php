@@ -6,11 +6,6 @@ class Setup extends Template{
 	public function getName(){
 		return __CLASS__;
 	}
-	public function getKudos(){
-		return array(
-			new Kudos("Matthew", "James", "Creator")
-		);
-	}
 	public function getPages(){
 		return array(
 			new SetupDialog(array(

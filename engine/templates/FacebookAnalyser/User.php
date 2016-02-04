@@ -45,6 +45,10 @@ class User extends DBObject{
 		*/
 		return SDK::instance()->helper->getLoginURL($URL, SDK::instance()->permissions);
 	}
+	public function getFacebookDeAuthURL($URL){
+		$token = $this->getToken();
+		return "https://www.facebook.com/logout.php?next=$URL&access_token=$token";
+	}
 	public function getUserLikes(){
 		return $this->getFacebookData("likes{about,artists_we_like,attire,awards,band_interests,bio,app_id,name,name_with_location_descriptor}");
 	}

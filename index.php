@@ -1,21 +1,28 @@
 <?php
 class ErrorHandler{
+	private static $errorHTML = "
+		<html>
+			<head>
+				<title>{errorName}</title>
+				<style>
+					html{display: table;width:100%;height:100%;}
+					body{font-family: Arial, Helvetica, sans-serif; text-align: center;display: table-cell;vertical-align: middle;}
+				</style>
+			</head>
+			<body>
+				<h1>Error {errorCode}: {errorName}</h1>
+				<h4>{errorDescription}</h4>
+			</body>
+		</html>
+	";
+	public static function setErrorHTML($code){
+		self::$errorHTML = $code;
+	}
 	public static function primitiveError($errorCode, $errorName, $errorDescription){
-		die("
-			<html>
-				<head>
-					<title>$errorName</title>
-					<style>
-						html{display: table;width:100%;height:100%;}
-						body{font-family: Arial, Helvetica, sans-serif; text-align: center;display: table-cell;vertical-align: middle;}
-					</style>
-				</head>
-				<body>
-					<h1>Error $errorCode: $errorName</h1>
-					<h4>$errorDescription</h4>
-				</body>
-			</html>
-		");
+		$errorCodeReplace = str_replace("{errorCode}", $errorCode, self::$errorHTML);
+		$errorNameReplace = str_replace("{errorName}", $errorName, $errorCodeReplace);
+		$errorDescriptionReplace = str_replace("{errorDescription}", $errorDescription, $errorNameReplace);
+		die($errorDescriptionReplace);
 	}
 	public static function exceptionHandler($errno, $errstr, $errfile, $errline){
 		ob_clean();

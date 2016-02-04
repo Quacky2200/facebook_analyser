@@ -1,38 +1,53 @@
 <?php
 define("CONFIG", dirname(__FILE__) . "/config/config-data.json");
-try{
-	Engine::requireAllInDir(__DIR__ . "/database/");
-	Engine::requireAllInDir(__DIR__ . "/config/");
-	Engine::requireAllInDir(__DIR__ . "/structure/");
-} catch (Exception $e){
-	ErrorHandler::primitiveError(500, "Cannot load Engine libraries", $e->getMessage());
-}
 class Engine{
 	private $currentTemplate;
 	public function __construct(){
+		self::startSession();
+		$this->getRequiredVersion();
+		$this->getRequiredLibraries();
+		$this->getRequiredConfig();
+		$this->getRequiredDatabaseConnection();
+		$this->currentTemplate = self::getTemplate($this->getConfig()->TEMPLATE);
+		$this->useTemplate($this->currentTemplate);
+		$this->run();
+	}
+	private function getRequiredLibraries(){
 		try{
-			$this->startSession();
-			$this->getRequiredVersion();
+			require(__DIR__ . "/database/DBConnection.php");
+			require(__DIR__ . "/database/DBObject.php");
+			require(__DIR__ . "/config/Config.php");
+			require(__DIR__ . "/structure/Template.php");
+			require(__DIR__ . "/structure/Page.php");
+		} catch(Exception $e){
+			ErrorHandler::primitiveError(500, "Cannot load Engine libraries", $e->getMessage());
+		}
+	}
+	private function getRequiredVersion(){
+		$versionRequired = '5.3.0';
+		if (!(version_compare(PHP_VERSION, $versionRequired) >= 0)){
+			ErrorHandler::primitiveError(500, "Cannot initiate Engine", "Requires PHP version $versionRequired and higher (Currently " . PHP_VERSION . ")");
+		}
+	}
+	private function getRequiredConfig(){
+		try{
 			if(!$this->getConfig()->configExists()){
 				$this->currentTemplate = Engine::requireFile(__DIR__ . "/config/setup/main.php");
 				$this->run();
 				exit(0);
 			}
 			$this->getConfig()->open();
-			DBConnection::connectToDB($this->getConfig()->DB_HOST, $this->getConfig()->DB_USERNAME, $this->getConfig()->DB_PASSWORD, $this->getConfig()->DB_NAME);
-			$this->currentTemplate = null;
-			$_GET = $this->returnProtectedGETVariables();
-			$_POST = $this->returnProtectedPOSTVariables();	
-			$currentTemplate = self::getTemplate($this->getConfig()->TEMPLATE);
-			$this->useTemplate($currentTemplate);
-			$this->run();
-		} catch(Exception $e){
-			ErrorHandler::primitiveError(500, "Cannot initiate Engine", $e->getMessage());
+		} catch (Exception $e) {
+			ErrorHandler::primitiveError(500, "Cannot initiate configuration", $e->getMessage());
 		}
 	}
-	private function getRequiredVersion(){
-		if (!(version_compare(PHP_VERSION, '5.3.0') >= 0)){
-			throw new Exception("Requires PHP version 5.3.0 and higher (Currently " . PHP_VERSION . ")");
+	private function getRequiredDatabaseConnection(){
+		try{
+			DBConnection::connectToDB($this->getConfig()->DB_HOST, $this->getConfig()->DB_USERNAME, $this->getConfig()->DB_PASSWORD, $this->getConfig()->DB_NAME);
+			$_GET = $this->returnProtectedGETVariables();
+			$_POST = $this->returnProtectedPOSTVariables();	
+		} catch (Exception $e){
+			ErrorHandler::primitiveError(500, "A database error occurred", $e->getMessage());
 		}
 	}
 	public static function getConfig(){
@@ -54,7 +69,7 @@ class Engine{
 		return $required;
 	}
 	public static function getLocalDir(){
-		return dirname(__FILE__);
+		return __DIR__;
 	}
 	public static function getRemoteDir($path){
 		$replacePath = str_replace(realpath($_SERVER['DOCUMENT_ROOT']), '', $path);
@@ -127,7 +142,7 @@ class Engine{
 	public static function returnProtectedGETVariables(){
 		//Clear all GET variables
 		$GET = $_GET;
-		foreach($GET as $key=>$value){
+		foreach($GET as $key=>&$value){
 			$GET[$key] = DBConnection::instance()->clear($value);
 		}
 		return $GET;
@@ -135,15 +150,15 @@ class Engine{
 	public static function returnProtectedPOSTVariables(){
 		//Clear all POST variables
 		$POST = $_POST;
-		foreach($POST as $key=>$value){
+		foreach($POST as $key=>&$value){
 			$POST[$key] = DBConnection::instance()->clear($value);
 		}
 		return $POST;
 	}
-	public function startSession(){
+	public static function startSession(){
 		session_start();
 	}
-	public function clearSession(){
+	public static function clearSession(){
 		session_unset();
         session_destroy();
         $_SESSION[] = array();

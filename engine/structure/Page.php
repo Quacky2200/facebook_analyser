@@ -6,15 +6,7 @@ abstract class Page{
 	public abstract function getURL();
 	//Let the derived class determine if they match the URL by returning a true/false
 	public abstract function isMatch($URL);
-	// private $URL = '';
-	// public final function getURL(){
-	// 	//Return the matched URL
-	// 	return $this->URL;
-	// }
-	// public final function setURL($URL){
-	// 	//Set the matched URL
-	// 	$this->URL = "http://" . $_SERVER['HTTP_HOST'] . Engine::getRemoteDir($URL);
-	// }
+	
 	public function getGeneratedTitle($template, $includeElement = false){
 		//Generate a nice Title for our page
 		$startElement = ($includeElement ? "<title>" : "");
