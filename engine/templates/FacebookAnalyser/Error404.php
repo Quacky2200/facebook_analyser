@@ -9,10 +9,14 @@ class Error404 extends Page{
 	public function isMatch($URL){
 		return true;
 	}
-	public function run($template){}
+	public $homeButton;
+	public function run($template){
+		$homeURL = Engine::getRemoteAbsolutePath((new Home())->getURL());
+		$this->homeButton = "<a href=\"$homeURL\">Take me home, please.</a>";
+	}
 	public function show($template){
 		include(__DIR__ . '/views/header.php');
-		echo "<h1 align='center'>This page doesn't exist</h1><p align='center'>Sorry about that...</p>";
+		include(__DIR__ . '/views/error404.php');
 		include(__DIR__ . '/views/footer.php');
 	}
 }

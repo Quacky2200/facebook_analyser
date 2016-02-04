@@ -1,9 +1,7 @@
 <?php
 abstract class Template{
 	private $CSS, $JS;
-	private $pages;
 	public function __construct(){
-		$this->pages = $this->getPages();
 		$this->CSS = array();
 		$this->JS = array();
 	}
@@ -44,8 +42,9 @@ abstract class Template{
 		return dirname($reflectionClass->getFileName());
 	}
 	public final function traverse($URL){
-		if (!is_null($this->pages) and $this->pages !== false){
-			foreach($this->pages as $Page){
+		$pages = $this->getPages();
+		if (!is_null($pages) and $pages !== false){
+			foreach($pages as $Page){
 				if(!is_null($Page) && $Page instanceof Page && $Page->isMatch($URL)){
 					try{
 						$Page->run($this);
