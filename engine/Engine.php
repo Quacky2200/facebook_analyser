@@ -87,8 +87,13 @@ class Engine{
 		return $replaceSlashes;
 	}
 	public static function getRemoteAbsolutePath($path){
-		//Refer to getRemoteDir to get a justified reason to this function.
-		return (self::isSecure() ? "https://" : "http://") . $_SERVER['HTTP_HOST'] . Engine::getRemoteDir($path);
+		$getPath = Engine::getRemoteDir($path);
+		$requestURI = $_SERVER['REQUEST_URI'];
+		if(!self::startsWith($getPath, $requestURI)){
+			$getPath = str_replace("//", "/", $requestURI . $getPath);
+		}
+		$getPath =  (self::isSecure() ? "https://" : "http://") . $_SERVER['HTTP_HOST'] . $getPath;
+		return $getPath;
 	}
 	public static function isSecure(){
 		//Thank you to this answer: http://stackoverflow.com/questions/1175096/how-to-find-out-if-youre-using-https-without-serverhttps#answer-2886224
