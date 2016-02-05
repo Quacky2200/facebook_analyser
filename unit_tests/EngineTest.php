@@ -40,7 +40,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase{
 		$this->assertEquals("/", Engine::getRemoteDir("/"));
 		//Test against a realworld scenario, i.e. our actual file path.
 		$_SERVER['DOCUMENT_ROOT'] = realpath(__DIR__ . '../');
-		$this->assertEquals("/home", "/home");
+		$this->assertEquals("/home", Engine::getRemoteDir(__DIR__ . "/home"));
 	}
 	public function test_getRemoteAbsolutePath(){
 		//These are some unit test variables that we need to use
