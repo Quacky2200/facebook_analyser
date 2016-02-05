@@ -1,26 +1,33 @@
 <?php
 class Analyse extends Page{
+	public $user, $forceNew, $resultsExist;
+	public function __construct(){
+		$this->user = User::instance();
+		//$this->resultsExist = count((new AnalysisResult())->get());
+		//TODO: if there's an AnalysisResult, redirect to results page rather than create a new one
+	}
 	public function getName(){
 		return __CLASS__;
 	}
 	public function getURL(){
 		return "/analyse/";
 	}
-	public function isMatch($URL){
-		$isNew = ($URL == $this->getURL() . "new/");
-		$this->forceNew = $isNew;
-		return $URL == $this->getURL() || $isNew;
+	public function getNewAnalysisURL(){
+		return $this->getURL() . "new/";
 	}
-	public $user, $forceNew;
+	public function isMatch($URL){
+		$isNew = ($URL == $this->getNewAnalysisURL());
+		$this->forceNew = $isNew;
+		return $URL == $this->getURL() && !$this->resultsExist || $isNew;
+	}
 	public function run($template){
-		$this->user = User::instance();
 		if(!$this->user->isLoggedIn()){
 			//Redirect back to the login page
 			ob_clean();
 			header("Location: " . Engine::getRemoteAbsolutePath((new Home())->getURL()));
 			exit();
 		}
-		//TODO: if there's an AnalysisResult, redirect to results page rather than create a new one
+		
 	}
 	public function tempRecursive($obj){
 		$stuff = null;

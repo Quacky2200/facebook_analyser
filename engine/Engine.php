@@ -72,11 +72,22 @@ class Engine{
 		return __DIR__;
 	}
 	public static function getRemoteDir($path){
+		/*	
+			This function gives us a relative URL 
+			rather than a filepath, this then allows us to transform
+			paths such as CSS etc to their correct local path on a website.
+			With the assistance of getRemoteAbsolutePath, we can get 
+			the server address and also the virtualhost address if there
+			is one. (e.g. Cardiff Uni project server use your email username,
+			in other words, mine is /JamesM27 on the project.cs.cf.ac.uk domain
+			however, without this fix, apache treats the folder as root, i.e. "/").
+		*/
 		$replacePath = str_replace(realpath($_SERVER['DOCUMENT_ROOT']), '', $path);
 		$replaceSlashes = str_replace('\\', '/', $replacePath);
 		return $replaceSlashes;
 	}
 	public static function getRemoteAbsolutePath($path){
+		//Refer to getRemoteDir to get a justified reason to this function.
 		return (self::isSecure() ? "https://" : "http://") . $_SERVER['HTTP_HOST'] . Engine::getRemoteDir($path);
 	}
 	public static function isSecure(){
@@ -116,15 +127,17 @@ class Engine{
 		}
 	}
 	public static function getTemplates(){
+		//Get an array of templates
 		$paths = glob(self::getLocalDir() . "/templates/*/main.php");
 		foreach($paths as &$path){
+			//Fix their path when returning the the template
 			$path = realpath($path);
 		}
 		return $paths;
 	}
 	public static function getTemplate($Name){
 		$find = __DIR__ . "/templates/" . $Name . "/main.php";
-		return (file_exists($find) ? $find : null);
+		return (file_exists($find) ? realpath($find) : null);
 	}
 	public function run(){
 		try{
