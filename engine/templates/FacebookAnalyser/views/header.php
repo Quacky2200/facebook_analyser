@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <!-- 
 
 use this for the visualisation: http://visjs.org/examples/network/nodeStyles/circularImages.html from http://visjs.org/network_examples.html
@@ -21,8 +22,8 @@ use this for the visualisation: http://visjs.org/examples/network/nodeStyles/cir
 			));
 			$template->addMultipleJS(array(
 				"js/jquery-1.11.2.min.js",
-				"js/load.js",
-				"js/scroll.js"
+				"js/load.js"//,
+				//"js/scroll.js"
 			));
 			$template->echoCSSAndJSDependencies();
 		?>

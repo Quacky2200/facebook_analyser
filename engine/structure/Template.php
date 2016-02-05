@@ -24,7 +24,7 @@ abstract class Template{
 		$values = array();
 		foreach($this->CSS as $value){
 			$url = (strpos($value, "http://") > -1 || strpos($value, "https://") > -1 ? $value : Engine::getRemoteDir(($appendTemplateDefaultPublicDirectory ? $this->getLocalDir() . '/public/' . $value : $value)));
-			array_push($values, "<link href='" . $url . "' rel='stylesheet' type='type/css'/>");
+			array_push($values, "<link href='" . $url . "' rel='stylesheet' type='text/css'/>");
 		}
 		foreach($this->JS as $value){
 			$url = (strpos($value, "http:") > -1 || strpos($value, "https://") > -1 ? $value : Engine::getRemoteDir(($appendTemplateDefaultPublicDirectory ? $this->getLocalDir() . '/public/' . $value : $value)));
