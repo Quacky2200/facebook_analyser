@@ -20,6 +20,7 @@ class Results extends Page{
 	}
 	public function show($template){
 		echo "Results are here: <br/>BLAH!!!!!!!";
+		$this->user->getUserInteraction();
 		//echo "User's first name: " . $this->user->name;
 		//$this->getAll();
 		//echo "<br/>User's birth date: " . $this->user->birthday;

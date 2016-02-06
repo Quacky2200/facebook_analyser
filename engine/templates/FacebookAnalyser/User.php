@@ -1,6 +1,8 @@
 <?php
 class User extends DBObject{
-	public $id, $name, $email;
+
+	public $id, $name, $email, $posts, $mostLikingUsers;
+
 	public static function instance(){
 		static $instance;
 		if(is_null($instance)){
@@ -30,6 +32,9 @@ class User extends DBObject{
 			if(is_null($this->getToken())) $this->setToken((string)$accessToken);
 			//Get basic user profile information such as user id, name and email to test whether the session works
 			$this->importFromJson($this->getBasicUserProfile()->getGraphUser());
+			//Get user statuses and metadata such as likes, comments
+			$this->importFromJson($this->getUserPosts()->getGraphUser());
+
 			return true;
 		} else {
 			return false;
@@ -53,7 +58,7 @@ class User extends DBObject{
 		return $this->getFacebookData("likes{about,artists_we_like,attire,awards,band_interests,bio,app_id,name,name_with_location_descriptor}");
 	}
 	public function getUserPosts(){
-		return $this->getFacebookData("posts.include_hidden(true){privacy,place,actions,name,description}");
+		return $this->getFacebookData("posts{likes{id, name}, comments{from}}");
 	}
 	public function getUserPhotos(){
 		return $this->getFacebookData("photos{tags}");
@@ -87,6 +92,44 @@ class User extends DBObject{
 		//restricting it to the data we get from the functions
 		return SDK::instance()->facebook->get("me?fields=$fields", $this->getToken());
 	}
+
+
+	public function getUserInteraction() {
+
+		$this->mostLikingUsers = array();
+		$this->totalLikeCount = 0;
+		for ($i = 0; $i < count($this->posts); $i++) {
+			$this->getMostLikingUsers($this->posts[$i]->likes);
+		}
+
+		echo "<pre>";
+		var_dump($this->mostLikingUsers);
+		echo "<pre/>";
+
+	}
+
+	public function getMostLikingUsers($userMessageLikes) {       
+        $likingUsers = array();
+        $totalLikeCount = 0;
+        //stores name,id and # of times user has liked all user posts
+		for ($x = 0; $x < count($userMessageLikes); $x++) {
+			$totalLikeCount++;
+			if (array_key_exists($userMessageLikes[$x]->id, $likingUsers)) {
+				$likingUsers[$userMessageLikes[$x]->id][0]++;
+			} else {
+				$likingUsers[$userMessageLikes[$x]->id] = array(0, $userMessageLikes[$x]->name, $userMessageLikes[$x]->id);
+			}
+		}
+		//stores the users that like posts more than average amount of times in the array $mostLikingUsers
+		foreach ($likingUsers as $user) {
+		    if ((count($likingUsers) == $totalLikeCount) || ($user[0] >= (count($likingUsers) / $totalLikeCount)) && ($this->id != $user[2])) {
+                $this->mostLikingUsers[$user[0]] = $user;
+			}
+		}
+	}
+
+	//will do rest of the functiosn in the morning
+	
 }
 
 ?>
