@@ -102,7 +102,7 @@ class User extends DBObject{
 
 		for ($i = 0; $i < count($this->posts); $i++) {
 			if (isset($this->posts[$i]->likes)) {
-			    $this->getLikingUSers($this->posts[$i]->likes);
+			    $this->getLikingUsers($this->posts[$i]->likes);
 			}
 			if (isset($this->posts[$i]->comments)) {
 			    $this->getCommentingUsers($this->posts[$i]->comments);
