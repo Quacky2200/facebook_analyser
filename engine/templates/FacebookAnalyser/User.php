@@ -102,35 +102,39 @@ class User extends DBObject{
 
 		for ($i = 0; $i < count($this->posts); $i++) {
 			if (isset($this->posts[$i]->likes)) {
-			    $this->getLikingUsers($this->posts[$i]->likes);
+			    $this->getLikeUsers($this->posts[$i]->likes);
 			}
 			if (isset($this->posts[$i]->comments)) {
-			    $this->getCommentingUsers($this->posts[$i]->comments);
+			    $this->getCommentUsers($this->posts[$i]->comments);
 			}
 		}
 
 
 
-		echo "<pre> array containing likes below.";
-		print_r($this->getMostLikingUsers());
-		echo "array containing comments below";
-		print_r($this->getMostCommentingUsers());
+		echo "<pre> array containing likes below.</br>";
+		print_r($this->likingUsers);
+		echo "commenting</br>";
+		print_r($this->commentingUsers);
+		echo "liking and commenting</br>";
+		print_r($this->getLikeAndCommentUsers());
+		echo "Users that like and comment above avg</br>";
+		print_r($this->getMostLikeAndCommentUsers($this->getLikeAndCommentUsers()));
 		echo "</pre>";
 	}
 
-	public function getLikingUsers($userMessageLikes) {       
+	public function getLikeUsers($userMessageLikes) {       
         //stores name,id and # of times user has liked all user posts
 		for ($x = 0; $x < count($userMessageLikes); $x++) {
 			$this->totalLikeCount++;
 			if (array_key_exists($userMessageLikes[$x]->id, $this->likingUsers)) {
 				$this->likingUsers[$userMessageLikes[$x]->id][0]++;
-			} else {
-				$this->likingUsers[$userMessageLikes[$x]->id] = array(0, $userMessageLikes[$x]->name, $userMessageLikes[$x]->id);
+			} elseif ($this->id != $userMessageLikes[$x]->id) {
+				$this->likingUsers[$userMessageLikes[$x]->id] = array(1, $userMessageLikes[$x]->name, $userMessageLikes[$x]->id); //notice first element is not zero
 			}
 		}
 	}
 
-	public function getMostLikingUsers() {
+	public function getMostLikesUser() {
 		$mostLikingUsers = array();
 		foreach ($this->likingUsers as $user) {
 		    if ((count($this->likingUsers) == $this->totalLikeCount) || ($user[0] > (count($this->likingUsers) / $this->totalLikeCount)) && ($this->id != $user[2])) {
@@ -140,13 +144,13 @@ class User extends DBObject{
 		return $mostLikingUsers;
 	}
 
-	public function getCommentingUsers($userMessageComments) {
+	public function getCommentUsers($userMessageComments) {
         for ($x = 0; $x < count($userMessageComments); $x++) {
         	$this->totalCommentCount++;
             if (array_key_exists($userMessageComments[$x]->from->id, $this->commentingUsers)) {
             	$this->commentingUsers[$userMessageComments[$x]->from->id][0]++;
-            } else {
-            	$this->commentingUsers[$userMessageComments[$x]->from->id] = array(0, $userMessageComments[$x]->from->name, $userMessageComments[$x]->from->id);
+            } elseif ($this->id != $userMessageComments[$x]->from->id) {
+            	$this->commentingUsers[$userMessageComments[$x]->from->id] = array(1, $userMessageComments[$x]->from->name, $userMessageComments[$x]->from->id); //notice first element is not zero
             }
         }
 	}
@@ -161,6 +165,29 @@ class User extends DBObject{
             }        	
         }
         return $mostCommentingUsers;
+	}
+
+	public function getLikeAndCommentUsers() {
+		$likeAndCommentUsers = array();
+        foreach ($this->likingUsers as $userOne) {
+        	foreach($this->commentingUsers as $userTwo) {
+        		if ($userOne[2] == $userTwo[2]){
+        			$likeAndCommentUsers[$userOne[2]] = [($userOne[0] + $userTwo[0]), $userOne[1], $userOne[2]];
+        	    }
+        	}
+        }
+        return $likeAndCommentUsers;
+	}
+
+	public function getMostLikeAndCommentUsers($likeAndCommentUsers) {
+		$mostLikeAndCommentUsers = array();
+        foreach ($likeAndCommentUsers as $user) {
+        	//we add 2 to the count($likeAndCommentUsers) becauser totalLikeCount and totalCommentCount isnt zero based
+			if ((count($likeAndCommentUsers) == $likeAndCommentUsers) || ($user[0] > (($this->totalLikeCount + $this->totalCommentCount) / (count($likeAndCommentUsers) + 2))) && ($this->id != $user[2])) {
+				array_push($mostLikeAndCommentUsers, $user);
+            }       	
+        }
+        return $mostLikeAndCommentUsers;
 	}
 	
 }
