@@ -137,7 +137,7 @@ class User extends DBObject{
 	public function getMostLikesUser() {
 		$mostLikingUsers = array();
 		foreach ($this->likingUsers as $user) {
-		    if ((count($this->likingUsers) == $this->totalLikeCount) || ($user[0] > (count($this->likingUsers) / $this->totalLikeCount)) && ($this->id != $user[2])) {
+		    if ((count($this->likingUsers) == $this->totalLikeCount) || ($user[0] > ($this->totalLikeCount / count($this->likingUsers))) && ($this->id != $user[2])) {
                 $mostLikingUsers[$user[2]] = $user;
 			}
 		}
@@ -159,7 +159,7 @@ class User extends DBObject{
 		$mostCommentingUsers = array();
         foreach ($this->commentingUsers as $user) {
             foreach ($this->commentingUsers as $user) {
-				if ((count($this->commentingUsers) == $this->totalCommentCount) || ($user[0] > (count($this->commentingUsers) / $this->totalCommentCount)) && ($this->id != $user[2])) {
+				if ((count($this->commentingUsers) == $this->totalCommentCount) || ($user[0] > ($this->totalCommentCount / count($this->commentingUsers))) && ($this->id != $user[2])) {
 					$mostCommentingUsers[$user[2]] = $user;
                 } 
             }        	
