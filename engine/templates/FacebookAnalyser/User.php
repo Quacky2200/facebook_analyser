@@ -1,7 +1,7 @@
 <?php
 class User extends DBObject{
 
-	public $id, $name, $email, $posts, $mostLikingUsers;
+	public $id, $name, $email, $posts, $totalLikeCount, $totalCommentCount, $likingUsers, $commentingUsers;
 
 	public static function instance(){
 		static $instance;
@@ -95,40 +95,73 @@ class User extends DBObject{
 
 
 	public function getUserInteraction() {
-
-		$this->mostLikingUsers = array();
+		$this->likingUsers = array();
+	    $this->commentingUsers = array();
 		$this->totalLikeCount = 0;
+		$this->totalCommentCount = 0;
+
 		for ($i = 0; $i < count($this->posts); $i++) {
-			$this->getMostLikingUsers($this->posts[$i]->likes);
+			if (isset($this->posts[$i]->likes)) {
+			    $this->getLikingUSers($this->posts[$i]->likes);
+			}
+			if (isset($this->posts[$i]->comments)) {
+			    $this->getCommentingUsers($this->posts[$i]->comments);
+			}
 		}
 
-		echo "<pre>";
-		var_dump($this->mostLikingUsers);
-		echo "<pre/>";
 
+
+		echo "<pre> array containing likes below.";
+		print_r($this->getMostLikingUsers());
+		echo "array containing comments below";
+		print_r($this->getMostCommentingUsers());
+		echo "</pre>";
 	}
 
-	public function getMostLikingUsers($userMessageLikes) {       
-        $likingUsers = array();
-        $totalLikeCount = 0;
+	public function getLikingUsers($userMessageLikes) {       
         //stores name,id and # of times user has liked all user posts
 		for ($x = 0; $x < count($userMessageLikes); $x++) {
-			$totalLikeCount++;
-			if (array_key_exists($userMessageLikes[$x]->id, $likingUsers)) {
-				$likingUsers[$userMessageLikes[$x]->id][0]++;
+			$this->totalLikeCount++;
+			if (array_key_exists($userMessageLikes[$x]->id, $this->likingUsers)) {
+				$this->likingUsers[$userMessageLikes[$x]->id][0]++;
 			} else {
-				$likingUsers[$userMessageLikes[$x]->id] = array(0, $userMessageLikes[$x]->name, $userMessageLikes[$x]->id);
-			}
-		}
-		//stores the users that like posts more than average amount of times in the array $mostLikingUsers
-		foreach ($likingUsers as $user) {
-		    if ((count($likingUsers) == $totalLikeCount) || ($user[0] >= (count($likingUsers) / $totalLikeCount)) && ($this->id != $user[2])) {
-                $this->mostLikingUsers[$user[0]] = $user;
+				$this->likingUsers[$userMessageLikes[$x]->id] = array(0, $userMessageLikes[$x]->name, $userMessageLikes[$x]->id);
 			}
 		}
 	}
 
-	//will do rest of the functiosn in the morning
+	public function getMostLikingUsers() {
+		$mostLikingUsers = array();
+		foreach ($this->likingUsers as $user) {
+		    if ((count($this->likingUsers) == $this->totalLikeCount) || ($user[0] > (count($this->likingUsers) / $this->totalLikeCount)) && ($this->id != $user[2])) {
+                $mostLikingUsers[$user[2]] = $user;
+			}
+		}
+		return $mostLikingUsers;
+	}
+
+	public function getCommentingUsers($userMessageComments) {
+        for ($x = 0; $x < count($userMessageComments); $x++) {
+        	$this->totalCommentCount++;
+            if (array_key_exists($userMessageComments[$x]->from->id, $this->commentingUsers)) {
+            	$this->commentingUsers[$userMessageComments[$x]->from->id][0]++;
+            } else {
+            	$this->commentingUsers[$userMessageComments[$x]->from->id] = array(0, $userMessageComments[$x]->from->name, $userMessageComments[$x]->from->id);
+            }
+        }
+	}
+
+	public function getMostCommentingUsers() {
+		$mostCommentingUsers = array();
+        foreach ($this->commentingUsers as $user) {
+            foreach ($this->commentingUsers as $user) {
+				if ((count($this->commentingUsers) == $this->totalCommentCount) || ($user[0] > (count($this->commentingUsers) / $this->totalCommentCount)) && ($this->id != $user[2])) {
+					$mostCommentingUsers[$user[2]] = $user;
+                } 
+            }        	
+        }
+        return $mostCommentingUsers;
+	}
 	
 }
 
