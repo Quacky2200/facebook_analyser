@@ -1,0 +1,5 @@
+/*centerstage - putting everything from the webpage in the middle*/
+html, body{width:100%;height:100%;margin:0;padding:0}
+body{position:relative;}
+main.centerstage{display:table;text-align:center;width:100%;height:100%;}
+main.centerstage > *{display:table-cell;vertical-align:middle;}
