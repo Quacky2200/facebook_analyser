@@ -19,6 +19,7 @@ abstract class Template{
 	}
 	public abstract function getPages();
 	public abstract function getName();
+	public abstract function configure($setup);
 	//Return array of CSS and JS Dependencies
 	public final function getCSSAndJSDependencies($appendTemplateDefaultPublicDirectory = true){
 		$values = array();
@@ -49,7 +50,7 @@ abstract class Template{
 					try{
 						$Page->run($this);
 						$Page->show($this);
-						exit();
+						return null;
 					} catch (Exception $e){
 						ErrorHandler::primitiveError(500, "Page script error", $e->getMessage());
 					}

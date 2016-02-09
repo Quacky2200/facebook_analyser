@@ -2,7 +2,8 @@
 class ConfigSetup extends SetupChapter{
 	private $htaccessFilename;
 	public function __construct(){
-		$this->htaccessFilename = $_SERVER['DOCUMENT_ROOT'] . $_SERVER['REQUEST_URI'] . ".htaccess";
+		$rootpath = $_SERVER['DOCUMENT_ROOT'] . str_replace(basename($_SERVER['PHP_SELF']), "", $_SERVER['PHP_SELF']);
+		$this->htaccessFilename = "$rootpath.htaccess";
 		parent::__construct("engine-welcome-chapter", "Welcome", "Before we start, we first have to setup a few things to get you going. Please follow the steps, it will only take a couple of minutes.");
 	}
 	public function onLoad(){
@@ -12,7 +13,9 @@ class ConfigSetup extends SetupChapter{
 	}
 	public function onSubmit(){
 		ErrorHandler::stop();
-		$Config = new Config(TEMP_CONFIG_FILE, false);
+		$config = Engine::getConfig();
+		$config->setConfigFilename(TEMP_CONFIG_FILE);
+		$done_config = $config->save(true);
 		$done_htaccess = file_put_contents($this->htaccessFilename, 
 "Options -Indexes
 RewriteEngine On
@@ -26,14 +29,13 @@ RewriteRule \.(jp[e]?g|gif|png|css|js|ttf|woff|ico|bmp|pdf|doc[x]?)$ - [L]
 #Redirect all files not match index.php
 RewriteCond %{REQUEST_FILENAME} !(.*)/index\.php$
 RewriteRule ^.*$ index.php?current_engine_page=$0 [L,NC,QSA]");
-		$done_config = $Config->save(true);
-		if(!$done_htaccess || !$done_config){
-			$this->sendStatus(true, array($this->addName('write-error'), "htaccess: " . (string)$done_htaccess, "config: " . (string)$done_config));
+		if(!$done_htaccess || !$done_config || !in_array('mod_rewrite', apache_get_modules())){
+			$this->sendStatus(true, array($this->addName('write-error')));
 		}
 	}
 	public function getElements(){
 		return array(
-			new Element("p", array("class"=>"input error " . $this->addName("write-error")), "Cannot write to the directory. Make sure you have given the right priviledges to your webserver software."),
+			new Element("p", array("class"=>"input error " . $this->addName("write-error")), "Cannot write to the directory. Make sure you have given the right privileges to your webserver software. <b>N.B.</b>You must have mod_rewrite installed and enabled."),
 		);
 	}
 }

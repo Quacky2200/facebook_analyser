@@ -32,7 +32,7 @@ class Config{
 	public function open(){
 		if(file_exists(self::$configFilename)){
 			$contents = json_decode(file_get_contents(self::$configFilename));
-			foreach($contents as $key => $value){
+			foreach($contents as $key=>$value){
 				$this->$key = $value;
 			}
 			return true;

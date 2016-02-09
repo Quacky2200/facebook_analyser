@@ -29,7 +29,7 @@ a.fblogin{display: inline-block;background: #2D5090;color: white;border: none;bo
 a.fblogin span{display: table-cell;padding: 0.8em;}
 a.fblogin i.fa.fa-facebook{display: table-cell;padding: 0em 1.2em 0em 1.5em;border-right: 0.1em solid rgba(0,0,0,0.2);}
 /*Not yet optimised for mobile*/
-nav.topbar{display: block;width: 100%;height:80px;}
+nav.topbar{display: block;position: fixed;width: 100%;top:0;height:80px;}
 nav.topbar div.container{display:table;width: 100%;padding: 10px;position:relative;height:100%;max-width: 80%;margin:0 auto;}
 nav.topbar div.container ul li a,
 nav.topbar div.container ul li a:link, 
@@ -44,8 +44,8 @@ nav.topbar div.container ul, nav.topbar div.container ul li{vertical-align: midd
 nav.topbar div.container ul li a{padding: 0.25em;}
 nav, nav ul, nav ul li, nav ul li a{overflow: hidden;}
 
-main.settings{width: 100%;max-width: 80%;margin: 0 auto;}
-main.settings div.container{border-radius: 10px;background: white;box-shadow:  0 0 10px black;color: #4E4848;padding: 10px;}
+main.settings{padding-top: 80px;width: 100%;max-width: 80%;margin: 0 auto;}
+main.settings div.container{border-radius: 10px;background: white;box-shadow:  0 0 10px black;color: #333333;padding: 10px;}
 main.settings div.container div.user{display:table;margin:0 auto;}
 main.settings div.container div.user > div{display:table-cell;padding: 10px; vertical-align: middle;}
 main.settings div.container div.user > div > div.accountpicture{width: 256px; height: 256px;border-radius: 100%; border: 5px solid lightgray;}
@@ -111,7 +111,7 @@ div.footer{text-align:center;padding: 10px;color: #111323;}
     h5{font-size: 3.5vw;}
     h6{font-size: 2vw;}
 }
-@media (min-width: 100px) {
+@media screen and (min-width: 100px) and (min-device-width: 1100px){
     body{font-size: 12px;}
     h1{font-size: 5em;}
     h2{font-size: 4em;}

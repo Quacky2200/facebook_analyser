@@ -62,18 +62,18 @@ class Result{
 	}
 	public function getTimeElapsedApproximate($secs){
 		$bit = array(
-			'years' => $secs / 31556926 % 12,
-			'weeks' => $secs / 604800 % 52,
-			'days' => $secs / 86400 % 7,
-			'hours' => $secs / 3600 % 24,
-			'minutes' => $secs / 60 % 60//,
+			' years' => $secs / 31556926 % 12,
+			' weeks' => $secs / 604800 % 52,
+			' days' => $secs / 86400 % 7,
+			' hours' => $secs / 3600 % 24,
+			' minutes' => $secs / 60 % 60//,
 			//' seconds' => $secs % 60
 		);
 			
 		foreach($bit as $k => $v){
 			if($v > 0){
 				$ret[] = $v . $k;
-				return join(' ', $ret) . "ago";
+				return join(' ', $ret) . " ago";
 			}
 		}
 		return "just now";

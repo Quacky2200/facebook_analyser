@@ -30,17 +30,25 @@ class TemplateSetup extends SetupChapter{
 	public function getElements(){
 		return array(
 			new Element("p", array("class"=>"input error " . $this->addName("error")), "Cannot select this Template. Please select another"),
+			new Element("p", array("class"=>"input error " . $this->addName("template-config-error")), "This template has an configuration error."),
 			new Element("select", array("name"=>$this->addName("options")), $this->getTemplateOptions()),
 		);
 	}
 	public function onSubmit(){
 		$templateName = $_POST[$this->addName("options")];
 		if($this->testTemplate($templateName) === true){
-			$Config = new Config(TEMP_CONFIG_FILE);
-			$Config->TEMPLATE = $templateName;
-			$Config->save(true);
+			$config = Engine::getConfig();
+			$config->setConfigFilename(TEMP_CONFIG_FILE);
+			$config->TEMPLATE = $templateName;
+			$template = include(Engine::getTemplate($templateName));
+			if(!$template instanceof Template){
+				$this->sendStatus(true, array($this->addName("error")));
+			} else{
+				$template->configure($this);
+				$config->save(true);
+			}
 		} else {
-			$this->sendSuccess(true, array($this->addName("error")));
+			$this->sendStatus(true, array($this->addName("error")));
 		}
 	}
 }

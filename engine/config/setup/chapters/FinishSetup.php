@@ -6,8 +6,6 @@ class FinishSetup extends SetupChapter{
 	public function onLoad(){}
 
 	public function onSubmit(){
-		$Config = new Config(TEMP_CONFIG_FILE);
-		$Config->save(true);
 		rename(TEMP_CONFIG_FILE, CONFIG_FILE);
 		$this->sendStatus(false, Engine::getRemoteDir($_SERVER['REQUEST_URI']));
 	}

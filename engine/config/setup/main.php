@@ -6,6 +6,7 @@ class Setup extends Template{
 	public function getName(){
 		return __CLASS__;
 	}
+	public function configure($setup){}
 	public function getPages(){
 		return array(
 			new SetupDialog(array(

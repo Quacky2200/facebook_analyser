@@ -7,15 +7,12 @@ class Engine{
 		$this->getRequiredVersion();
 		$this->getRequiredLibraries();
 		$this->getRequiredConfig();
-		$this->getRequiredDatabaseConnection();
 		$this->currentTemplate = self::getTemplate($this->getConfig()->TEMPLATE);
 		$this->useTemplate($this->currentTemplate);
 		$this->run();
 	}
 	private function getRequiredLibraries(){
 		try{
-			require(__DIR__ . "/database/DBConnection.php");
-			require(__DIR__ . "/database/DBObject.php");
 			require(__DIR__ . "/config/Config.php");
 			require(__DIR__ . "/structure/Template.php");
 			require(__DIR__ . "/structure/Page.php");
@@ -41,19 +38,18 @@ class Engine{
 			ErrorHandler::primitiveError(500, "Cannot initiate configuration", $e->getMessage());
 		}
 	}
-	private function getRequiredDatabaseConnection(){
-		try{
-			DBConnection::connectToDB($this->getConfig()->DB_HOST, $this->getConfig()->DB_USERNAME, $this->getConfig()->DB_PASSWORD, $this->getConfig()->DB_NAME);
-			$_GET = $this->returnProtectedGETVariables();
-			$_POST = $this->returnProtectedPOSTVariables();	
-		} catch (Exception $e){
-			ErrorHandler::primitiveError(500, "A database error occurred", $e->getMessage());
-		}
-	}
 	public static function getConfig(){
 		static $instance;
 		if(null === $instance){
 			$instance = new Config(CONFIG, false);
+		}
+		return $instance;
+	}
+	public static function getDatabase(){
+		static $instance;
+		if(null === $instance){
+			$config = self::getConfig();
+			$instance = new PDO("mysql:host=$config->DB_HOST;dbname=$config->DB_NAME", $config->DB_USERNAME, $config->DB_PASSWORD);
 		}
 		return $instance;
 	}
@@ -179,22 +175,6 @@ class Engine{
 		} catch (Exception $e) {
 			ErrorHandler::primitiveError(500, "Cannot run Engine", $e->getMessage());
 		}
-	}
-	public static function returnProtectedGETVariables(){
-		//Clear all GET variables
-		$GET = $_GET;
-		foreach($GET as $key=>&$value){
-			$GET[$key] = DBConnection::instance()->clear($value);
-		}
-		return $GET;
-	}
-	public static function returnProtectedPOSTVariables(){
-		//Clear all POST variables
-		$POST = $_POST;
-		foreach($POST as $key=>&$value){
-			$POST[$key] = DBConnection::instance()->clear($value);
-		}
-		return $POST;
 	}
 	public static function startSession(){
 		session_start();

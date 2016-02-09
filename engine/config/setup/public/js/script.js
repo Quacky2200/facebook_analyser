@@ -49,6 +49,9 @@ $(document).ready(function(){
 									}
 									$(this).slideUp();
 								});
+								if(p["details"]["error_message"] !== undefined){
+									alert("Error:" + p["details"]["error_message"]);
+								}
 							} else {
 								alert("Unknown JSON Action: " . p);
 							}
