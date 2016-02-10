@@ -53,9 +53,11 @@ class UserTest extends PHPUnit_Framework_TestCase {
     public function test_getMostLikeAndCommentUsers() {
         $udummy = new UserDummy(1634766393446243);
         $dummyFBValues = ["1634766393446243" => ["2", "Shaun George", "1634766393446243"]];
-        print_r($dummyFBValues);
         $dummytotalLikeAndCommentCount = 2;
-        $expectedAnswer = ["1634766393446243" => ["2", "Shaun George", "1634766393446243"]];
+        $expectedAnswer = ["0" => ["2", "Shaun George", "1634766393446243"]];
+
+        print_r($expectedAnswer);
+        print_r($udummy->getMostLikeAndCommentUsers($dummyFBValues, $dummytotalLikeAndCommentCount));
         $this->assertEquals($expectedAnswer, $udummy->getMostLikeAndCommentUsers($dummyFBValues, $dummytotalLikeAndCommentCount));
     }
 

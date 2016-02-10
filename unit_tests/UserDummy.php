@@ -61,14 +61,14 @@ class UserDummy {
             	$commentingUsers[$userMessageComments[$x]->from->id] = array(1, $userMessageComments[$x]->from->name, $userMessageComments[$x]->from->id); //notice first element is not zero
             }
         }
-        return $commentingUsers;
+        return [$totalCommentCount, $commentingUsers];
 	}
 
-	public function getMostCommentingUsers() {
+	public function getMostCommentingUsers($commentingUsers, $totalCommentCount) {
 		$mostCommentingUsers = array();
-        foreach ($this->commentingUsers as $user) {
-            foreach ($this->commentingUsers as $user) {
-				if ((count($this->commentingUsers) == $this->totalCommentCount) || ($user[0] > ($this->totalCommentCount / count($this->commentingUsers))) && ($this->id != $user[2])) {
+        foreach ($commentingUsers as $user) {
+            foreach ($commentingUsers as $user) {
+				if ((count($commentingUsers) == $totalCommentCount) || ($user[0] > ($totalCommentCount / count($commentingUsers))) && ($this->id != $user[2])) {
 					$mostCommentingUsers[$user[2]] = $user;
                 } 
             }        	
@@ -76,10 +76,10 @@ class UserDummy {
         return $mostCommentingUsers;
 	}
 
-	public function getLikeAndCommentUsers() {
+	public function getLikeAndCommentUsers($likingUsers, $commentingUsers) {
 		$likeAndCommentUsers = array();
-        foreach ($this->likingUsers as $userOne) {
-        	foreach($this->commentingUsers as $userTwo) {
+        foreach ($likingUsers as $userOne) {
+        	foreach($commentingUsers as $userTwo) {
         		if ($userOne[2] == $userTwo[2]){
         			$likeAndCommentUsers[$userOne[2]] = [($userOne[0] + $userTwo[0]), $userOne[1], $userOne[2]];
         	    }
@@ -88,11 +88,11 @@ class UserDummy {
         return $likeAndCommentUsers;
 	}
 
-	public function getMostLikeAndCommentUsers($likeAndCommentUsers) {
+	public function getMostLikeAndCommentUsers($likeAndCommentUsers, $totalLikeCount) {
 		$mostLikeAndCommentUsers = array();
         foreach ($likeAndCommentUsers as $user) {
         	//we add 2 to the count($likeAndCommentUsers) becauser totalLikeCount and totalCommentCount isnt zero based
-			if ((count($likeAndCommentUsers) == $likeAndCommentUsers) || ($user[0] > (($this->totalLikeCount + $this->totalCommentCount) / (count($likeAndCommentUsers) + 2))) && ($this->id != $user[2])) {
+			if ((count($likeAndCommentUsers) == $likeAndCommentUsers) || ($user[0] > ($totalLikeCount / (count($likeAndCommentUsers) + 2))) && ($this->id != $user[2])) {
 				array_push($mostLikeAndCommentUsers, $user);
             }       	
         }
