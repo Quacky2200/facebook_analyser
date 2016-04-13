@@ -81,6 +81,7 @@ class AnalysisWorker{
 	// 	$this->data['friend_count'] = User::Instance()->getUserFriends()->getGraphUser()['summary']['count'];
 	// }
 	public $likingUsers, $commentingUsers, $getLikeAndCommentUsers, $getMostLikeAndCommentUsers, $posts;
+
 	public function getUserInteraction() {
 		$posts = $this->getUserPosts;
 		$this->likingUsers = array();
@@ -96,18 +97,6 @@ class AnalysisWorker{
 			    $this->getCommentUsers($this->posts[$i]->comments);
 			}
 		}
-
-
-
-		// echo "<pre> array containing likes below.</br>";
-		// print_r($this->likingUsers);
-		// echo "commenting</br>";
-		// print_r($this->commentingUsers);
-		// echo "liking and commenting</br>";
-		// print_r($this->getLikeAndCommentUsers());
-		// echo "Users that like and comment above avg</br>";
-		// print_r($this->getMostLikeAndCommentUsers($this->getLikeAndCommentUsers()));
-		// echo "</pre>";
 	}
 
 	public function getLikeUsers($userMessageLikes) {       
@@ -177,5 +166,89 @@ class AnalysisWorker{
         }
         return $mostLikeAndCommentUsers;
 	}
+
+
+	/**
+	function readPosts($posts) {
+		$postContents = array();
+
+		for ($i = 0; $i < count($posts); $i++) {
+			//echo $posts[$i];
+			$taggedUsers = array();
+			foreach ($posts[$i]['message_tags'] as $friends) {
+				$taggedUsers[$posts[$i]['id']] = array($friends['id'], $friends['name']);
+			}
+
+			$postContents[$posts[$i]['id']] = array($posts[$i]['id'], $posts[$i]['message'], $taggedUsers);
+		}
+
+		return $postContents;
+	}
+
+
+	function analysePosts($posts) {
+		$userConnections = array(); //temporary storage, storing in database would be better!
+
+		foreach($posts as $post) {
+
+			echo "<pre><h2>Post message</h2>";
+			print_r($post[1]);
+			echo "<h2>users tagged</h2>";
+			print_r($post[2][$post[0]][0]);
+			echo "</pre></br>";
+
+			$results = analyseContext($post[1]);
+			
+			if (($results[0] > $results[1] && $results[1] > $results[0] / 2) || ($results[1] > $results[0] && $results[0] > $results[1] / 2))  {
+
+			} else if ($results[0] > $results[1]) {
+				if (array_key_exists($post[2][$post[0]][0], $userConnections)) {
+					$userConnections[$post[2][$post[0]][0]]++;
+				} else {
+					$userConnections[$post[2][$post[0]][0]] = 1;
+				}
+			}
+		}
+
+		echo "<pre>";
+		print_r($userConnections);
+		echo "</pre>";
+	}
+
+	function analyseContext($message) {
+		$positiveKeywords = array('love' => 0, 'like' => 0, 'friend' => 0, 'bestfriend' => 0, 'fun' => 0);
+		$negativeKeywords = array('angry' => 0, 'hate' => 0, 'mad' => 0, 'sad' => 0 , 'dissapointed' => 0);
+
+		$message = explode(" ", $message);
+		foreach ($message as $word) {
+			if (array_key_exists($word, $positiveKeywords)) {
+				$positiveKeywords[$word]++;
+			} elseif (array_key_exists($word, $negativeKeywords)) {
+				$negativeKeywords[$word]++;
+			}
+		}
+
+		$totalPositiveKeywords = 0;
+		$totalNegativeKeywords = 0;
+
+		foreach ($positiveKeywords as $word => $count) {
+			$totalPositiveKeywords += $count;
+		}
+
+		foreach ($negativeKeywords as $word => $count) {
+			$totalNegativeKeywords += $count;
+		}
+
+		echo "<pre><h3>Positive comment collection</h3>";
+		print_r($positiveKeywords);
+		echo "<h3>Negative comment collection</h3>";
+		print_r($negativeKeywords);
+		echo "</pre>";
+
+		return array($totalPositiveKeywords, $totalNegativeKeywords);
+
+	}	
+	**/
+	
 }
 ?>
