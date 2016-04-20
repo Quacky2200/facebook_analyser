@@ -53,9 +53,12 @@ class Analyse extends Page{
 		//for now we are putting this in another class as 
 		//there is a lot of work that has to be done whilst 
 		//page is loading
-		require(__DIR__ . "/../AnalysisWorker.php");
-		$work = new AnalysisWorker();
+		require(__DIR__ . "/../AsyncAnalysisWorker.php");
+		$work = new AsyncAnalysisWorker();
 		$work->run();
+		//require(__DIR__ . "/../AnalysisWorker.php");
+		//$work = new AnalysisWorker();
+		//$work->run();
 	}
 }
 ?>

@@ -28,8 +28,11 @@ class DatabaseSetup extends SetupChapter{
 	}
 	private function try_connect($HOST, $UNAME, $PASS, $DBNAME){
 		try{
-			$dbh = new PDO("mysql:host=$HOST;", $UNAME, $PASS);
-			return true;
+			if($HOST != null && $UNAME != null && $DBNAME != null){
+				$dbh = new PDO("mysql:host=$HOST;", $UNAME, $PASS);
+				return true;
+			}
+			return false;
 		} catch (PDOException $e){
 			return false;
 		}
