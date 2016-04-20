@@ -89,7 +89,7 @@ class AsyncAnalysisWorker{
 		// die();
 		$newResultCode = Engine::generateRandomString(8);
 		$this->dbh = Engine::getDatabase();
-		$this->dbh->exec("INSERT INTO Users (User_ID, Name, Email) VALUES ('" . User::instance()->id . "', '" . User::instance()->name . "', '" . User::instance()->email . "')");
+		$this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$this->dbh->exec("INSERT INTO Results (Result_ID, Date, Data, Visible) VALUES ('" . $newResultCode . "', NOW(), '" . json_encode($this->data[self::OUT]) . "', false)");
 		$this->dbh->exec("INSERT INTO Result_History (User_ID, Result_ID) VALUES ('" . User::instance()->id . "', '" . $newResultCode . "')");
 		$addr = Engine::getRemoteAbsolutePath((new Results())->getURL() . $newResultCode);

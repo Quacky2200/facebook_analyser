@@ -31,6 +31,9 @@ class Analyse extends Page{
 				header("Location: " . (New Account())->getURL());
 				exit();
 			}
+			if (!$this->userExists){
+				$dbh->exec("INSERT INTO Users (User_ID, Name, Email) VALUES ('" . User::instance()->id . "', '" . User::instance()->name . "', '" . User::instance()->email . "')");
+			}
 			//Otherwise, we are a new user and we don't need to force a new analysis
 			return true;
 		} else if ($isMatchingURL && !$isLoggedIn) {

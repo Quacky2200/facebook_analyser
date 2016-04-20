@@ -1,6 +1,6 @@
 <?php
 class Result{
-	public $Result_ID, $Date, $Data, $Visibility;
+	public $Result_ID, $Date, $Data, $Visible;
 	/*
 		This class needs a lot of work to make the analysis to be finalised 
 		so that it will work in tandem with derived AnalysisElement classes and the

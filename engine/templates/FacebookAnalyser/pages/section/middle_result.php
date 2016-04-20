@@ -1,5 +1,15 @@
 <?php if (!$this->result && !$this->deleted){
-	ErrorHandler::primitiveError(400, "Invalid Request", "");
+?>
+	<main class="centerstage">
+		<header title="">
+			<span style="display:inline-block;margin: 5% 0;">
+				<h1 style="margin:0">Invalid Request</h1>
+				<p><a <?php echo "href='" . Engine::getRemoteAbsolutePath((new Home())->getURL()) . "'";?> title="Go back home">Take me home, please</a></p>
+			</span>
+		</header>
+	</main>
+<?php
+exit();
 }
 require(__DIR__ . '/top_account_header.php');
 ?>
@@ -14,7 +24,8 @@ require(__DIR__ . '/top_account_header.php');
 			<?php } ?>
 			<div class="result information">
 				<h2 align="center">Your Result</h2>
-				<h6 align="center"><?php echo "Created " . $this->result->getTimeElapsedApproximate($this->result->Date);?></h6>
+
+				<h6 align="center"><?php echo "Created " . $this->result->getTimeElapsedApproximate(time() - $this->result->Date);?></h6>
 				<div class="text">
 					<?php
 						//TODO: if viewing as public, change from 2nd person to 3rd person

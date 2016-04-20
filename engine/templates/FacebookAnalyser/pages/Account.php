@@ -36,7 +36,7 @@ class Account extends Page{
 		</div>
 		<?php
 		//Get all the results and order them by the date (Most recent come first)
-		$query = $dbh->query("SELECT Result_ID, UNIX_TIMESTAMP( DATE ) \"Date\", Data FROM Results WHERE Result_ID IN (SELECT Result_ID FROM Result_History WHERE User_ID='" . User::instance()->id . "') ORDER BY Date DESC");
+		$query = $dbh->query("SELECT Result_ID, UNIX_TIMESTAMP( DATE ) \"Date\", Data, Visible FROM Results WHERE Result_ID IN (SELECT Result_ID FROM Result_History WHERE User_ID='" . User::instance()->id . "') ORDER BY Date DESC");
 		//For all of the analyses, we give a link and the time created.
 		foreach($query->fetchALL(PDO::FETCH_CLASS, 'Result') as $obj){
 			$timeSinceCreation = $obj->getTimeElapsedApproximate(time() - $obj->Date);

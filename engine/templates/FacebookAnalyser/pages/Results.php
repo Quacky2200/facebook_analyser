@@ -62,14 +62,13 @@ class Results extends Page{
 		$isLoggedIn = User::instance()->isLoggedIn();
 		//Make sure we're only running actions with non-public requests.
 		if($viewPublic && !$isAction || $isLoggedIn){
-			$sql = "SELECT * FROM Results WHERE Result_ID = :result AND " . 
+			$sql = "SELECT Result_ID, UNIX_TIMESTAMP( DATE ) \"Date\", Data, Visible FROM Results WHERE Result_ID = :result AND " . 
 				($viewPublic ? "Visible" : "Result_ID IN (SELECT Result_ID FROM Result_History WHERE User_ID='" . User::instance()->id . "')") . 
 				" LIMIT 1";
 			$stmt = $dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 			$stmt->execute(array(':result'=> $resultID));
 			//Apply an action if there is one
 			$result = $stmt->fetchObject('Result');
-
 			if($result && $isAction){
 				if(in_array("delete", $this->URLMatch)){
 					$this->deleteResult($resultID);
