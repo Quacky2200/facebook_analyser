@@ -36,12 +36,10 @@ class EngineTest extends \PHPUnit_Framework_TestCase{
 			in other words, mine is /JamesM27 on the project.cs.cf.ac.uk domain
 			however, without this fix, apache treats the folder as root, i.e. "/").
 		*/
-		//Remove the unit test folder for our actual document path
-		$_SERVER['DOCUMENT_ROOT'] = realpath(__DIR__ . '../');
-		//Pretend we are a web server running index.php to set our environment
-		$_SERVER["PHP_SELF"] = "/index.php";
+		$_SERVER['DOCUMENT_ROOT'] = "/var/www/";
 		$this->assertEquals("/", Engine::getRemoteDir("/"));
 		//Test against a realworld scenario, i.e. our actual file path.
+		$_SERVER['DOCUMENT_ROOT'] = realpath(__DIR__ . '../');
 		$this->assertEquals("/home", Engine::getRemoteDir(__DIR__ . "/home"));
 	}
 	public function test_getRemoteAbsolutePath(){
@@ -51,8 +49,6 @@ class EngineTest extends \PHPUnit_Framework_TestCase{
 		$_SERVER['SERVER_PORT'] = 80;
 		$_SERVER['HTTP_HOST'] = "localhost";
 		$_SERVER['REMOTE_ADDRESS'] = "/";
-		$_SERVER["PHP_SELF"] = "/index.php";
-		$_SERVER['DOCUMENT_ROOT'] = "C:\xampp\htdocs";
 		$this->assertEquals("http://localhost/", Engine::getRemoteAbsolutePath("/"));
 	}
 	public function test_isSecure(){

@@ -4,7 +4,6 @@
 		<meta charset="utf-8">
 		<meta name="description" content="">
 		<meta name="keywords" content="FaceBook Analyser - What type of Facebook user are you?">
-		<meta name="viewport" content="width=720, maximum-scale=1.0" />
 		<meta http-equiv="X-UA-Compatible" content="IE=9">
 		<meta http-equiv="X-UA-Compatible" content="IE=8">
 		<?php
