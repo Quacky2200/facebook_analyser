@@ -27,6 +27,7 @@ require(__DIR__ . '/AnalysisElement.php');
 			}
 			//Remove the user from the results if they are included.
 			if (array_key_exists(User::instance()->id, $this->interaction)) unset($this->interaction[User::instance()->id]);
+			$this->sort();
 			return $this->interaction;
 		}
 
@@ -97,6 +98,29 @@ require(__DIR__ . '/AnalysisElement.php');
 			} else {
 				return self::NEUTRAL_COMMENT_SCORE;
 			}
+		}
+		private function sort(){
+			//Let's generate the mean for each person
+			foreach ($this->interaction as $id=>$scores){
+				$this->interaction[$id]['mean_score'] = ($scores['likes'] + $scores['comments'] + $scores['tags']) / 3; 
+			}
+			//Let's get the mean column from the array
+			$scores = array_column($this->interaction, 'mean_score');
+			$distance = array();
+			$mean = array_sum($scores) / count($scores);
+			foreach ($scores as $score){
+				$distance[count($distance)] = abs($score - $mean);
+			}
+			$meanDeviation = round(array_sum($distance) / count($distance), 4);
+			//Remove all that fall below our mean deviation score
+			foreach ($this->interaction as $key=>$value){
+				if($value['mean_score'] < $meanDeviation) unset($this->interaction[$key]);
+			}
+			//Update our scores array for sorting the new results
+			$scores = array_column($this->interaction, 'mean_score');
+			//Finally sort out our results depending on the mean score (average interaction)
+			array_multisort($scores, SORT_DESC, $this->interaction);
+
 		}
 	}
 ?>

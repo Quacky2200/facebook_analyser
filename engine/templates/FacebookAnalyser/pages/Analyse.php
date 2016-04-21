@@ -46,22 +46,21 @@ class Analyse extends Page{
 	}
 
 	public function run($template){
+		//Make sure we are logged in
 		require("login.php");
 	}
 	public function show($template){
+		//We're going to start Asyncronous work, prevent any output unless we flush it whilst we are running asyncronously
 		ob_implicit_flush(true);
 		include("section/header.php");
 		include("section/middle_analyse.php");
+		//Flush the header and analyse section to the user
 		for($k = 0; $k < 40000; $k++) echo ' ';
-		//for now we are putting this in another class as 
-		//there is a lot of work that has to be done whilst 
-		//page is loading
+		//Run the asyncronous work with this class.
 		require(__DIR__ . "/../AsyncAnalysisWorker.php");
 		$work = new AsyncAnalysisWorker();
+		//Let's go and run our analysis.
 		$work->run();
-		//require(__DIR__ . "/../AnalysisWorker.php");
-		//$work = new AnalysisWorker();
-		//$work->run();
 	}
 }
 ?>
