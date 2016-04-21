@@ -1,28 +1,37 @@
-	<nav class='topbar'>
-		<div class='container'>
-			<ul>
-				<li>
-					<?php echo "<a href='" . Engine::getRemoteAbsolutePath((new Home())->getURL()) . "'><b>FacebookAnalyser</b></a>";?>
-				</li>
-			</ul>
-			<ul align='right'>
-				<li>
-					<?php echo "<a class='fblogin' style='float:right' href='" . Engine::getRemoteAbsolutePath((new Account())->getURL()) . "'>Account</a>";?>
-				</li>
-				<li>
-					<?php echo "<a class='fblogin' style='float:right' href='" . User::instance()->getFacebookDeAuthURL(Engine::getRemoteAbsolutePath((new Home())->getURL())) . "'>Logout</a>";?>
-				</li>
-			</ul>
-		</div>
-	</nav>
+<?php if (!$this->result && !$this->deleted){
+?>
+	<main class="centerstage">
+		<header title="">
+			<span style="display:inline-block;margin: 5% 0;">
+				<h1 style="margin:0">Invalid Request</h1>
+				<p><a <?php echo "href='" . Engine::getRemoteAbsolutePath((new Home())->getURL()) . "'";?> title="Go back home">Take me home, please</a></p>
+			</span>
+		</header>
+	</main>
+<?php
+exit();
+}
+require(__DIR__ . '/top_account_header.php');
+?>
 	<main class="settings">
 		<div class="container">
+			<?php if($this->deleted){ ?>
+				<h2 align='center' style='padding:100px 0;'>Your result was deleted</h2>
+				<p align='center' style='padding: 0 0 50px'><a <?php echo "href='" . Engine::getRemoteAbsolutePath((new Account())->getURL()) . "'"?>>Take me back to my account</a></p>
+			<?php die();
+			} else if ($this->shared){ ?>
+
+			<?php } ?>
 			<div class="result information">
 				<h2 align="center">Your Result</h2>
-				<h6 align="center">Created 10 minutes ago</h6>
+
+				<h6 align="center"><?php echo "Created " . $this->result->getTimeElapsedApproximate(time() - $this->result->Date);?></h6>
 				<div class="text">
-					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc elit mauris, pretium id nisl nec, interdum laoreet nulla. Donec quis pretium sapien. Mauris condimentum at sem id pharetra. Integer non dui at elit elementum dictum. Donec auctor libero at sapien pharetra semper. Nulla maximus metus eros, ac mattis leo fermentum nec. Sed urna sem, finibus pellentesque ipsum vel, pellentesque varius dolor.</p>
-					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc elit mauris, pretium id nisl nec, interdum laoreet nulla. Donec quis pretium sapien. Mauris condimentum at sem id pharetra. Integer non dui at elit elementum dictum. Donec auctor libero at sapien pharetra semper. Nulla maximus metus eros, ac mattis leo fermentum nec. Sed urna sem, finibus pellentesque ipsum vel, pellentesque varius dolor.</p>
+					<?php
+						//TODO: if viewing as public, change from 2nd person to 3rd person
+						//E.g. Your Result => Matthew's Result
+						echo $this->result->getReadable() . $this->result->getFacts();
+					?>
 				</div>
 		</div>
 	</main>

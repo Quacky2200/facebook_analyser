@@ -25,11 +25,17 @@ class Analyse extends Page{
 			$dbh = Engine::getDatabase();
 			//If this user exists in the database, they have used our application 
 			//before and an analysis would have been created on authentication
+			echo "<pre>";
+			var_dump($dbh);
+			echo "</pre>";
 			$this->userExists = ($dbh->query( "SELECT * FROM Users WHERE User_ID=" . $this->user->id)->fetch(PDO::FETCH_ASSOC) != null);
 			if(!$forcingNewAnalysis && $this->userExists){
 				ob_clean();
 				header("Location: " . (New Account())->getURL());
 				exit();
+			}
+			if (!$this->userExists){
+				$dbh->exec("INSERT INTO Users (User_ID, Name, Email) VALUES ('" . User::instance()->id . "', '" . User::instance()->name . "', '" . User::instance()->email . "')");
 			}
 			//Otherwise, we are a new user and we don't need to force a new analysis
 			return true;
@@ -43,18 +49,20 @@ class Analyse extends Page{
 	}
 
 	public function run($template){
+		//Make sure we are logged in
 		require("login.php");
 	}
 	public function show($template){
+		//We're going to start Asyncronous work, prevent any output unless we flush it whilst we are running asyncronously
 		ob_implicit_flush(true);
 		include("section/header.php");
 		include("section/middle_analyse.php");
+		//Flush the header and analyse section to the user
 		for($k = 0; $k < 40000; $k++) echo ' ';
-		//for now we are putting this in another class as 
-		//there is a lot of work that has to be done whilst 
-		//page is loading
-		require(__DIR__ . "/../AnalysisWorker.php");
-		$work = new AnalysisWorker();
+		//Run the asyncronous work with this class.
+		require(__DIR__ . "/../AsyncAnalysisWorker.php");
+		$work = new AsyncAnalysisWorker();
+		//Let's go and run our analysis.
 		$work->run();
 	}
 }
