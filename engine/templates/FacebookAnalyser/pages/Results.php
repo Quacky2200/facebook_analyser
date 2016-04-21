@@ -6,73 +6,88 @@ class Results extends Page{
 	public function getURL(){
 		return "/result/";
 	}
+	public function getDeleteURL(){
+
+	}
+	public function getShareURL(){
+
+	}
 	public $result;
+	private $URLMatch;
+	private $deleted = false;
+	private $shared = false;
 	public function isMatch($URL){
 		/*
 			This regex is to match an example like:
 				/result/a8fjS8wK
 				/result/a8fjS8wK/
+				/public/result/a8fjS8wK/
+				/result/a8fjS8wK/delete
+				/result/a8fjS8wK/share
 		*/
-		if(preg_match("/^\/(result\/[a-z0-9A-Z]{8})[\/]?$/", $URL)){
-			//TODO: Find result for match in DB
-			//to return true if found (and store within $this->result), otherwise false
-			//$this->result
-			return true;
-		} 
-		return false;
+		return preg_match("/^(?:\/(public))?\/(?:result)\/(\w{8})(?:\/(delete|share))?[\/]?$/", $URL, $this->URLMatch);
+	}
+	public function deleteResult($resultID){
+		//Try deleting the result
+		try{
+			$dbh = Engine::getDatabase();
+			$sql = "DELETE FROM Results WHERE Result_ID = :result AND Result_ID IN (SELECT Result_ID FROM Result_History WHERE User_ID='" . User::instance()->id . "')";
+			$stmt = $dbh->prepare($sql);
+			$stmt->execute(array(':result'=> $resultID));
+			//Show delete complete?
+			$this->deleted = true;
+		} catch (PDOException $e){/*Invalid request*/}
+	}
+	public function shareResult($resultID){
+		//Try sharing the result
+		try{
+			echo "SHARE";
+			$dbh = Engine::getDatabase();
+			$sql = "UPDATE Results SET Visible=TRUE WHERE Result_ID = :result AND Result_ID IN (SELECT Result_ID FROM Result_History WHERE User_ID='" . User::instance()->id . "')";
+			$stmt = $dbh->prepare($sql);
+			$stmt->execute(array(':result'=> $resultID));
+			//Show the shared URL?
+			$this->shared = true;
+		} catch (PDOException $e){/*Invalid Request*/}
 	}
 	public function run($template){
-		require("login.php");
-		//TODO: Load result from DB into Result model using PDO
-		// and use getResult function on model
-		//TODO: Get time elapsed from loaded result
+		//Remove the whole string as the first result
+		array_shift($this->URLMatch);
+		//Get the database
+		$dbh = Engine::getDatabase();
+		//Are we visiting a public result?
+		$viewPublic = in_array("public", $this->URLMatch);
+		$resultID = $this->URLMatch[1];
+		$isAction = in_array("delete", $this->URLMatch) || in_array("share", $this->URLMatch);
+		$isLoggedIn = User::instance()->isLoggedIn();
+		//Make sure we're only running actions with non-public requests.
+		if($viewPublic && !$isAction || $isLoggedIn){
+			$sql = "SELECT Result_ID, UNIX_TIMESTAMP( DATE ) \"Date\", Data, Visible FROM Results WHERE Result_ID = :result AND " . 
+				($viewPublic ? "Visible" : "Result_ID IN (SELECT Result_ID FROM Result_History WHERE User_ID='" . User::instance()->id . "')") . 
+				" LIMIT 1";
+			$stmt = $dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+			$stmt->execute(array(':result'=> $resultID));
+			//Apply an action if there is one
+			$result = $stmt->fetchObject('Result');
+			if($result && $isAction){
+				if(in_array("delete", $this->URLMatch)){
+					$this->deleteResult($resultID);
+				} else if (in_array("share", $this->URLMatch)){
+					$this->result = $result;
+					$this->shareResult($resultID);
+				}
+			} else {
+				//Set the result
+				$this->result = $result;
+			}
+		}
 	}
 	public function show($template){
 		include("section/header.php");
 		include("section/middle_result.php");
 		include("section/footer.php");
 	}
-	//Thanks to http://php.net/manual/en/function.time.php#Hcom108581
-	public function getTimeElapsedShort($secs){
-		$bit = array(
-			'y' => $secs / 31556926 % 12,
-			'w' => $secs / 604800 % 52,
-			'd' => $secs / 86400 % 7,
-			'h' => $secs / 3600 % 24,
-			'm' => $secs / 60 % 60,
-			's' => $secs % 60
-		);
-			
-		foreach($bit as $k => $v)
-			if($v > 0)$ret[] = $v . $k;
-			
-		return join(' ', $ret);
-	}
-	public function getTimeElapsedLong($secs){
-		$bit = array(
-			' year'        => $secs / 31556926 % 12,
-			' week'        => $secs / 604800 % 52,
-			' day'        => $secs / 86400 % 7,
-			' hour'        => $secs / 3600 % 24,
-			' minute'    => $secs / 60 % 60,
-			' second'    => $secs % 60
-		);
-			
-		foreach($bit as $k => $v){
-			if($v > 1)$ret[] = $v . $k . 's';
-			if($v == 1)$ret[] = $v . $k;
-			}
-		array_splice($ret, count($ret)-1, 0, 'and');
-		$ret[] = 'ago.';
-		
-		return join(' ', $ret);
-		//TESTING:
-		// $nowtime = time();
-		// $oldtime = 1335939007;
 
-		// echo "time_elapsed_A: ".time_elapsed_A($nowtime-$oldtime)."\n";
-		// echo "time_elapsed_B: ".time_elapsed_B($nowtime-$oldtime)."\n";
-	}
 
 }
 ?>

@@ -62,7 +62,8 @@ class User extends ReflectiveObject{
 		return $this->getFacebookData("likes{about,artists_we_like,attire,awards,band_interests,bio,app_id,name,name_with_location_descriptor}");
 	}
 	public function getUserPosts(){
-		return $this->getFacebookData("posts.include_hidden(true){privacy,place,actions,name,description}");
+		//return $this->getFacebookData("posts.include_hidden(true){privacy,place,actions,name,description}");
+		return $this->getFacebookData('posts{privacy,name,description,message,status_type,likes{id,name},comments{from,message},created_time,message_tags,with_tags}');
 	}
 	public function getUserPhotos(){
 		return $this->getFacebookData("photos{tags}");
@@ -75,6 +76,9 @@ class User extends ReflectiveObject{
 	}
 	public function getUserFriends(){
 		return $this->getFacebookData("friends{about,address,age_range,birthday,education,email}");
+	}
+	public function getUserFriendCount(){
+		return $this->getFacebookData("friends");
 	}
 	public function getUserMovies(){
 		return $this->getFacebookData("movies{name}");

@@ -31,6 +31,9 @@ class Analyse extends Page{
 				header("Location: " . (New Account())->getURL());
 				exit();
 			}
+			if (!$this->userExists){
+				$dbh->exec("INSERT INTO Users (User_ID, Name, Email) VALUES ('" . User::instance()->id . "', '" . User::instance()->name . "', '" . User::instance()->email . "')");
+			}
 			//Otherwise, we are a new user and we don't need to force a new analysis
 			return true;
 		} else if ($isMatchingURL && !$isLoggedIn) {
@@ -53,9 +56,12 @@ class Analyse extends Page{
 		//for now we are putting this in another class as 
 		//there is a lot of work that has to be done whilst 
 		//page is loading
-		require(__DIR__ . "/../AnalysisWorker.php");
-		$work = new AnalysisWorker();
+		require(__DIR__ . "/../AsyncAnalysisWorker.php");
+		$work = new AsyncAnalysisWorker();
 		$work->run();
+		//require(__DIR__ . "/../AnalysisWorker.php");
+		//$work = new AnalysisWorker();
+		//$work->run();
 	}
 }
 ?>
