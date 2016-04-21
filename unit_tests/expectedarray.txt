@@ -1,0 +1,288 @@
+ FacebookAnalyser
+Analysing post interaction
+
+All finished!
+
+Array
+(
+    [id] => 1654412524814963
+    [name] => Shaun George
+    [email] => shaungeorgeonline@gmail.com
+    [gender] => male
+    [age_range] => Array
+        (
+            [max] => 20
+            [min] => 18
+        )
+
+    [birthday] => DateTime Object
+        (
+            [date] => 1996-06-25 00:00:00.000000
+            [timezone_type] => 3
+            [timezone] => Europe/Berlin
+        )
+
+    [education] => Array
+        (
+            [0] => Array
+                (
+                    [school] => Array
+                        (
+                            [id] => 36082185007
+                            [name] => Cardiff University
+                        )
+
+                    [type] => College
+                    [id] => 1489714694618081
+                )
+
+        )
+
+    [hometown] => Array
+        (
+            [id] => 103145123058362
+            [name] => Cardiff, United Kingdom
+        )
+
+    [posts] => Array
+        (
+            [0] => Array
+                (
+                    [privacy] => Array
+                        (
+                            [value] => ALL_FRIENDS
+                            [description] => Your friends
+                            [friends] => 
+                            [allow] => 
+                            [deny] => 
+                        )
+
+                    [message] => t
+                    [status_type] => mobile_status_update
+                    [created_time] => DateTime Object
+                        (
+                            [date] => 2015-10-20 13:51:19.000000
+                            [timezone_type] => 1
+                            [timezone] => +00:00
+                        )
+
+                    [id] => 1654412524814963_1636236923299190
+                    [likes] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [id] => 10153253015821447
+                                    [name] => Mevin Daniel
+                                )
+
+                            [1] => Array
+                                (
+                                    [id] => 10153359864267197
+                                    [name] => Rohan Sachdev
+                                )
+
+                            [2] => Array
+                                (
+                                    [id] => 10209001009328255
+                                    [name] => Will Leung
+                                )
+
+                            [3] => Array
+                                (
+                                    [id] => 941956049187092
+                                    [name] => Kenneth Cynric Medina Dasalla
+                                )
+
+                            [4] => Array
+                                (
+                                    [id] => 1056894821039198
+                                    [name] => Xerxes Bamji
+                                )
+
+                            [5] => Array
+                                (
+                                    [id] => 10204636747832499
+                                    [name] => Chris Ackerman
+                                )
+
+                            [6] => Array
+                                (
+                                    [id] => 959319250804111
+                                    [name] => Ben Morris
+                                )
+
+                        )
+
+                    [comments] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [from] => Array
+                                        (
+                                            [name] => Xerxes Bamji
+                                            [id] => 1056894821039198
+                                        )
+
+                                    [message] => h
+                                    [id] => 1636236923299190_1666520600270822
+                                )
+
+                            [1] => Array
+                                (
+                                    [from] => Array
+                                        (
+                                            [name] => Ziyaad Bheda
+                                            [id] => 1029397803793430
+                                        )
+
+                                    [message] => E
+                                    [id] => 1636236923299190_1666530270269855
+                                )
+
+                            [2] => Array
+                                (
+                                    [from] => Array
+                                        (
+                                            [name] => Shaun George
+                                            [id] => 1654412524814963
+                                        )
+
+                                    [message] => y
+                                    [id] => 1636236923299190_1666544076935141
+                                )
+
+                            [3] => Array
+                                (
+                                    [from] => Array
+                                        (
+                                            [name] => Xerxes Bamji
+                                            [id] => 1056894821039198
+                                        )
+
+                                    [message] => s
+                                    [id] => 1636236923299190_1666544510268431
+                                )
+
+                            [4] => Array
+                                (
+                                    [from] => Array
+                                        (
+                                            [name] => Ziyaad Bheda
+                                            [id] => 1029397803793430
+                                        )
+
+                                    [message] => a
+                                    [id] => 1636236923299190_1666663103589905
+                                )
+
+                            [5] => Array
+                                (
+                                    [from] => Array
+                                        (
+                                            [name] => Shaun George
+                                            [id] => 1654412524814963
+                                        )
+
+                                    [message] => l
+                                    [id] => 1636236923299190_1666665423589673
+                                )
+
+                            [6] => Array
+                                (
+                                    [from] => Array
+                                        (
+                                            [name] => Xerxes Bamji
+                                            [id] => 1056894821039198
+                                        )
+
+                                    [message] => T
+                                    [id] => 1636236923299190_1666667366922812
+                                )
+
+                            [7] => Array
+                                (
+                                    [from] => Array
+                                        (
+                                            [name] => Rohan Sachdev
+                                            [id] => 10153359864267197
+                                        )
+
+                                    [message] => Y
+                                    [id] => 1636236923299190_1666667426922806
+                                )
+
+                            [8] => Array
+                                (
+                                    [from] => Array
+                                        (
+                                            [name] => Shaun George
+                                            [id] => 1654412524814963
+                                        )
+
+                                    [message] => a
+                                    [id] => 1636236923299190_1666679730254909
+                                )
+
+                            [9] => Array
+                                (
+                                    [from] => Array
+                                        (
+                                            [name] => Mevin Daniel
+                                            [id] => 10153253015821447
+                                        )
+
+                                    [message] => G
+                                    [id] => 1636236923299190_1666680206921528
+                                )
+
+                            [10] => Array
+                                (
+                                    [from] => Array
+                                        (
+                                            [name] => Xerxes Bamji
+                                            [id] => 1056894821039198
+                                        )
+
+                                    [message] => Q
+                                    [id] => 1636236923299190_1666682813587934
+                                )
+
+                        )
+
+                )
+
+            [1] => Array
+                (
+                    [privacy] => Array
+                        (
+                            [value] => SELF
+                            [description] => Only Me
+                            [friends] => 
+                            [allow] => 
+                            [deny] => 
+                        )
+
+                    [name] => Born on June 25, 1996
+                    [created_time] => DateTime Object
+                        (
+                            [date] => 1996-06-25 07:00:00.000000
+                            [timezone_type] => 1
+                            [timezone] => +00:00
+                        )
+
+                    [id] => 1654412524814963_1489711167951767
+                    [likes] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [id] => 1056894821039198
+                                    [name] => Xerxes Bamji
+                                )
+
+                        )
+
+                )
+
+        )
+
+)
