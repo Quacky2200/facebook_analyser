@@ -69,6 +69,7 @@ class Results extends Page{
 			$stmt->execute(array(':result'=> $resultID));
 			//Apply an action if there is one
 			$result = $stmt->fetchObject('Result');
+			$result->Data = json_decode($result->Data, true);
 			if($result && $isAction){
 				if(in_array("delete", $this->URLMatch)){
 					$this->deleteResult($resultID);

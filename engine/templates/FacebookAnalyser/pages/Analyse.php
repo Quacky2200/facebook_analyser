@@ -25,6 +25,9 @@ class Analyse extends Page{
 			$dbh = Engine::getDatabase();
 			//If this user exists in the database, they have used our application 
 			//before and an analysis would have been created on authentication
+			echo "<pre>";
+			var_dump($dbh);
+			echo "</pre>";
 			$this->userExists = ($dbh->query( "SELECT * FROM Users WHERE User_ID=" . $this->user->id)->fetch(PDO::FETCH_ASSOC) != null);
 			if(!$forcingNewAnalysis && $this->userExists){
 				ob_clean();

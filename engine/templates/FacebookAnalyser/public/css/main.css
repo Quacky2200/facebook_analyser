@@ -322,6 +322,195 @@ div.results div.result a:visited {
     width: 100%;
     height: 100%;*/
     color: white;
+    -webkit-font-smoothing: antialiased;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 5vw;
+}
+p {
+    margin: 1em 0;
+}
+b {
+    font-weight: 400;
+}
+em,
+strong {
+    font-style: italic;
+}
+a:link,
+a:hover,
+a:active,
+a:visited {
+    text-decoration: none;
+}
+a:link,
+a:visited {
+    -webkit-transition: all 500ms;
+    transition: all 500ms;
+    color: #6EAEFF;
+}
+a:hover {
+    color: #B8D7FF;
+}
+a:active {
+    color: #0573FF;
+}
+h1 {
+    font-size: 12vw;
+}
+h2 {
+    font-size: 10.5vw;
+}
+h3 {
+    font-size: 9.5vw;
+}
+h4 {
+    font-size: 8vw;
+}
+h5 {
+    font-size: 6vw;
+}
+h6 {
+    font-size: 5.5vw;
+}
+a.fblogin {
+    display: inline-block;
+    background: #2D5090;
+    color: white;
+    border: none;
+    border-radius: 0.5em;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    padding: 0em;
+    text-decoration: none;
+    box-shadow: 0 0 0px -5px #000000, inset 0 0px 10px -1px #133783;
+    transition: box-shadow 500ms !important, transform 120ms !important;
+}
+a.fblogin span {
+    display: table-cell;
+    padding: 0.8em;
+}
+a.fblogin i.fa.fa-facebook {
+    display: table-cell;
+    padding: 0em 1.2em 0em 1.5em;
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
+}
+/*Not yet optimised for mobile*/
+
+nav.topbar {
+    display: block;
+    width: 100%;
+    height: 80px;
+}
+nav.topbar div.container {
+    display: table;
+    width: 100%;
+    padding: 10px;
+    position: relative;
+    height: 100%;
+    max-width: 80%;
+    margin: 0 auto;
+}
+nav.topbar div.container ul li a,
+nav.topbar div.container ul li a:link,
+nav.topbar div.container ul li a:hover,
+nav.topbar div.container ul li a:active,
+nav.topbar div.container ul li a:visited {
+    color: white;
+}
+nav.topbar div.container ul {
+    display: table-cell;
+}
+nav.topbar div.container ul li {
+    display: inline-block;
+}
+nav.topbar div.container ul,
+nav.topbar div.container ul li {
+    vertical-align: middle;
+}
+nav.topbar div.container ul li a {
+    padding: 0.25em;
+}
+nav,
+nav ul,
+nav ul li,
+nav ul li a {
+    overflow: hidden;
+}
+main.settings {
+    width: 100%;
+    max-width: 80%;
+    margin: 0 auto;
+}
+main.settings div.container {
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 0 10px black;
+    color: #333333;
+    padding: 10px;
+}
+main.settings div.container div.user {
+    display: table;
+    margin: 0 auto;
+}
+main.settings div.container div.user > div {
+    display: table-cell;
+    padding: 10px;
+    vertical-align: middle;
+}
+main.settings div.container div.user > div > div.accountpicture {
+    width: 128px;
+    height: 128px;
+    border-radius: 100%;
+    border: 2px solid black;
+}
+main.settings div.result.information {
+    padding: 50px 0;
+}
+main.settings div.result.information div.text {
+    max-width: 800px;
+    text-align: justify;
+    margin: 0 auto;
+}
+div.results div.result {
+    border: 1px solid #5D5D5D;
+    background: radial-gradient(at 50% -5%, #5F5F5F, #252525, #101010);
+    display: inline-block;
+    margin: 10px;
+    height: 128px;
+    width: 128px;
+    border-radius: 5px;
+    box-shadow: inset 0 0 15px black;
+    position: relative;
+    /*font-size: 15px;*/
+    font-size: 12px;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: baseline;
+}
+div.results div.result .actions {
+    bottom: auto;
+    top: 0;
+    text-align: right;
+    padding: 5px;
+}
+div.results div.result .actions a{
+    display: inline-block;line-height: 10px;vertical-align: middle;
+}
+div.results div.result .actions a img{
+    width: 16px;
+    height:16px;
+}
+div.results div.result,
+div.results div.result a,
+div.results div.result a:link,
+div.results div.result a:active,
+div.results div.result a:hover,
+div.results div.result a:visited {
+    /*color: #A5A5A5;
+    display: block;
+    width: 100%;
+    height: 100%;*/
+    color: white;
 }
 div.results div.result span {
     display: inline-block;
@@ -344,6 +533,42 @@ div.results div.result > a > div > * {
 div.results div.result > a > div > div > img{
     width: 60px;
     margin: auto;
+}
+div.topThree {
+    width: 800px;
+    height: 400px;
+    padding-bottom: 100px;
+}
+
+div.topThree > h5 {
+    margin-left: 32%;
+}
+div.topThree > #firstFriend >p {
+    position: relative;
+    top: 40px;
+    left: 44%;
+}
+
+div.topThree > #secondFriend >p {
+    position: relative;
+    top: -130px;
+    left: 15%;
+}
+
+div.topThree > #thirdFriend >p {
+    position: relative;
+    top: -400px;
+    left: 73%;
+}
+
+div.topThree > div > div.topProfilePic {
+    width: 180px;
+    height: 180px;
+    border-radius: 90px;
+}
+#firstFriend > div:after {
+    content: url('../images/winner-overlay.png');
+
 }
 .loader:before,
 .loader:after,
