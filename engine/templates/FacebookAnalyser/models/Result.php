@@ -23,8 +23,15 @@ class Result{
 	*/
 	public function getReadable(){
 		//Returns a user readable result based from the raw data.
+		return "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc elit mauris, pretium id nisl nec, interdum laoreet nulla. Donec quis pretium sapien. Mauris condimentum at sem id pharetra. Integer non dui at elit elementum dictum. Donec auctor libero at sapien pharetra semper. Nulla maximus metus eros, ac mattis leo fermentum nec. Sed urna sem, finibus pellentesque ipsum vel, pellentesque varius dolor.</p>
+			
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc elit mauris, pretium id nisl nec, interdum laoreet nulla. Donec quis pretium sapien. Mauris condimentum at sem id pharetra. Integer non dui at elit elementum dictum. Donec auctor libero at sapien pharetra semper. Nulla maximus metus eros, ac mattis leo fermentum nec. Sed urna sem, finibus pellentesque ipsum vel, pellentesque varius dolor.</p>";
+	}
+	public function getFacts(){
+		//Returns the raw data that *should* still be formatted in a presentable HTML format
+		return "<div align='center'><h3> Facts </h3><br/><div style='background: rgb(240,240,240);border-radius: 5px;display:inline-block; padding: 1vh 1vw;'>No data is available at this time</div></div>";
 
-		return $this->topThree()."<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc elit mauris, pretium id nisl nec, interdum laoreet nulla. Donec quis pretium sapien. Mauris condimentum at sem id pharetra. Integer non dui at elit elementum dictum. Donec auctor libero at sapien pharetra semper. Nulla maximus metus eros, ac mattis leo fermentum nec. Sed urna sem, finibus pellentesque ipsum vel, pellentesque varius dolor.</p>
+		return $this->topThree() . "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc elit mauris, pretium id nisl nec, interdum laoreet nulla. Donec quis pretium sapien. Mauris condimentum at sem id pharetra. Integer non dui at elit elementum dictum. Donec auctor libero at sapien pharetra semper. Nulla maximus metus eros, ac mattis leo fermentum nec. Sed urna sem, finibus pellentesque ipsum vel, pellentesque varius dolor.</p>
 			
 			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc elit mauris, pretium id nisl nec, interdum laoreet nulla. Donec quis pretium sapien. Mauris condimentum at sem id pharetra. Integer non dui at elit elementum dictum. Donec auctor libero at sapien pharetra semper. Nulla maximus metus eros, ac mattis leo fermentum nec. Sed urna sem, finibus pellentesque ipsum vel, pellentesque varius dolor.</p>";
 	}

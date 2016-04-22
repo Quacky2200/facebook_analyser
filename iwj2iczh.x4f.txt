@@ -1,0 +1,33 @@
+﻿Merge branch 'master' into New-Analysis-&-Mobile-Fix
+
+# Conflicts:
+#	engine/templates/FacebookAnalyser/AsyncAnalysisWorker.php
+#	engine/templates/FacebookAnalyser/models/Result.php
+#	engine/templates/FacebookAnalyser/pages/Results.php
+#	engine/templates/FacebookAnalyser/public/css/main.css
+#
+# It looks like you may be committing a merge.
+# If this is not correct, please remove the file
+#	.git/MERGE_HEAD
+# and try again.
+
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch New-Analysis-&-Mobile-Fix
+# Your branch is up-to-date with 'origin/New-Analysis-&-Mobile-Fix'.
+#
+# All conflicts fixed but you are still merging.
+#
+# Changes to be committed:
+#	modified:   engine/templates/FacebookAnalyser/AsyncAnalysisWorker.php
+#	modified:   engine/templates/FacebookAnalyser/models/Result.php
+#	modified:   engine/templates/FacebookAnalyser/pages/Analyse.php
+#	modified:   engine/templates/FacebookAnalyser/pages/Results.php
+#	modified:   engine/templates/FacebookAnalyser/public/css/main.css
+#	new file:   engine/templates/FacebookAnalyser/public/images/winner-overlay.png
+#	new file:   unit_tests/DummyPostInteraction.php
+#	modified:   unit_tests/EngineTest.php
+#	new file:   unit_tests/InteractionTest.php
+#
+

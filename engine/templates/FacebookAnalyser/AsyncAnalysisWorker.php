@@ -29,7 +29,6 @@ class AsyncAnalysisWorker{
 			"Analysing post interaction" => function(){
 				$interaction = new PostInteraction();
 				$this->data[self::OUT]['interaction'] = $interaction->analyse($this->data[self::IN]);
-				#die();
 			}
 		);
 	}
