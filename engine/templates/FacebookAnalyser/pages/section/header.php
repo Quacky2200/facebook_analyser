@@ -2,8 +2,8 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<meta name="description" content="">
-		<meta name="keywords" content="FaceBook Analyser - What type of Facebook user are you?">
+		<meta name="description" content="FaceBook Analyser - What type of Facebook user are you?">
+		<meta name="keywords" content="facebook, analyser, cardiff, uni, university, group, project">
 		<meta name="viewport" content="width=720, maximum-scale=1.0" />
 		<meta http-equiv="X-UA-Compatible" content="IE=9">
 		<meta http-equiv="X-UA-Compatible" content="IE=8">

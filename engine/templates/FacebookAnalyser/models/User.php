@@ -59,17 +59,17 @@ class User extends ReflectiveObject{
 		return "https://www.facebook.com/logout.php?next=$URL&access_token=$token";
 	}
 	public function getUserLikes(){
-		return $this->getFacebookData("likes{about,artists_we_like,attire,awards,band_interests,bio,app_id,name,name_with_location_descriptor}");
+		return $this->getFacebookData("likes{about,artists_we_like,attire,awards,band_interests,bio,app_id,name,name_with_location_descriptor,created_time}");
 	}
 	public function getUserPosts(){
 		//return $this->getFacebookData("posts.include_hidden(true){privacy,place,actions,name,description}");
 		return $this->getFacebookData('posts{privacy,name,description,message,status_type,likes{id,name},comments{from,message},created_time,message_tags,with_tags}');
 	}
 	public function getUserPhotos(){
-		return $this->getFacebookData("photos{tags}");
+		return $this->getFacebookData("photos{tags,created_time}");
 	}
 	public function getUserVideos(){
-		return $this->getFacebookData("videos{tags}");
+		return $this->getFacebookData("videos{tags,created_time}");
 	}
 	public function getUserTagged(){
 		return $this->getFacebookData("tagged");
@@ -81,13 +81,13 @@ class User extends ReflectiveObject{
 		return $this->getFacebookData("friends");
 	}
 	public function getUserMovies(){
-		return $this->getFacebookData("movies{name}");
+		return $this->getFacebookData("movies{name,created_time}");
 	}
 	public function getUserMusic(){
-		return $this->getFacebookData("music{name}");
+		return $this->getFacebookData("music{name,created_time}");
 	}
 	public function getUserBooks(){
-		return $this->getFacebookData("books{name}");
+		return $this->getFacebookData("books{name,created_time}");
 	}
 	public function getBasicUserProfile(){
 		return $this->getFacebookData("id,name,email");
@@ -99,6 +99,9 @@ class User extends ReflectiveObject{
 		//Allow other classes to get Facebook Data if they require it, rather than 
 		//restricting it to the data we get from the functions
 		return SDK::instance()->facebook->get("me?fields=$fields", $this->getToken());
+	}
+	public static function getAvatar($id){
+		return "https://graph.facebook.com/$id/picture?type=large";
 	}
 }
 

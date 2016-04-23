@@ -1,5 +1,6 @@
 <?php
 require(__DIR__ . '/analysis/PostInteraction.php');
+require(__DIR__ . '/analysis/ActivityAnalysis.php');
 class AsyncAnalysisWorker{
 	//IN is the data we're getting from Facebook, INTO the analysis
 	const IN = "extracted";
@@ -25,10 +26,44 @@ class AsyncAnalysisWorker{
 			"Getting user posts" => function(){
 				$this->getUserDataFromUserFunction('getUserPosts');
 			},
+			"Getting liked pages" => function(){
+				$this->getUserDataFromUserFunction('getUserLikes');
+			},
+			"Getting user photos" => function(){
+				$this->getUserDataFromUserFunction('getUserPhotos');
+			},
+			"Getting user videos" => function(){
+				$this->getUserDataFromUserFunction('getUserVideos');
+			},
+			"Getting liked movies" => function(){
+				$this->getUserDataFromUserFunction('getUserMovies');
+			},
+			"Getting liked music" => function(){
+				$this->getUserDataFromUserFunction('getUserMusic');
+			},
+			"Getting liked books" => function(){
+				$this->getUserDataFromUserFunction('getUserBooks');
+			},
 			//Now for the analysis
 			"Analysing post interaction" => function(){
 				$interaction = new PostInteraction();
 				$this->data[self::OUT]['interaction'] = $interaction->analyse($this->data[self::IN]);
+			},
+			"Analysing activity" => function(){
+				//Apply another analysis
+				$activity = new ActivityAnalysis();
+				$this->data[self::OUT]['activity'] = $activity->analyse($this->data[self::IN]);
+			},
+			"Creating analysis" => function(){
+				//Save *other* information for the Facebook share button
+				//Save the user's name - we can get this in the database but this is just easier for now.
+				$this->data[self::OUT]['name'] = User::instance()->name;
+				//Generate a code we can use to show the result to the user
+				$this->data[self::OUT]['analysis-id'] = Engine::generateRandomString(8);
+				$this->data[self::OUT]['share-url'] = Engine::getRemoteAbsolutePath((new Results())->getURL() . $this->data[self::OUT]['analysis-id']);
+				$this->data[self::OUT]['share-title'] = "Click to see my analysis!";
+				$this->data[self::OUT]['share-description'] =  User::instance()->name . " has shared a Facebook Analysis with you. Click to see their result or create your own... What type of Facebook user are you?";
+				$this->data[self::OUT]['share-image'] = $this->data[self::OUT]['share-url'] . "/image/";
 			}
 		);
 	}
@@ -79,22 +114,20 @@ class AsyncAnalysisWorker{
 		$this->echoImplicit("Preparing...");
 		//Start working
 		$this->startAsync();
-		//Generate a code we can use to show the result to the user
-		$newResultCode = Engine::generateRandomString(8);
+		$resultID = $this->data[self::OUT]['analysis-id'];
+		$resultURL = $this->data[self::OUT]['share-url'];
 		//Get the database connection so we can upload the result
 		$this->dbh = Engine::getDatabase();
 		//Make sure that if we get any errors, that we get told about them.
 		$this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		//Insert the data into the results first
-		$this->dbh->exec("INSERT INTO Results (Result_ID, Date, Data, Visible) VALUES ('" . $newResultCode . "', NOW(), '" . json_encode($this->data[self::OUT]) . "', false)");
+		$this->dbh->exec("INSERT INTO Results (Result_ID, Date, Data, Visible) VALUES ('" . $resultID . "', NOW(), '" . json_encode($this->data[self::OUT]) . "', true)");
 		//Add the relationship between the result and the user
-		$this->dbh->exec("INSERT INTO Result_History (User_ID, Result_ID) VALUES ('" . User::instance()->id . "', '" . $newResultCode . "')");
-		//Get the new URL for the result we created
-		$addr = Engine::getRemoteAbsolutePath((new Results())->getURL() . $newResultCode);
+		$this->dbh->exec("INSERT INTO Result_History (User_ID, Result_ID) VALUES ('" . User::instance()->id . "', '" . $resultID . "')");
 		//Tell the user that we're finished
 		$this->echoImplicit("All finished!");
 		//Stop processing the page and redirect the user
-		$this->echoImplicitFinishAndRedirect($addr);
+		$this->echoImplicitFinishAndRedirect($resultURL);
 	}
 
 }

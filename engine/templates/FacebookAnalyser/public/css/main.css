@@ -148,6 +148,8 @@ em,
 strong {
     font-style: italic;
 }
+i{font-style: italic;}
+sup {font-size:xx-small; vertical-align:super;}
 a:link,
 a:hover,
 a:active,
@@ -323,9 +325,9 @@ div.results div.result a:visited {
     height: 100%;*/
     color: white;
     -webkit-font-smoothing: antialiased;
-    font-family: 'Open Sans', sans-serif;
+    /*font-family: 'Open Sans', sans-serif;
     font-weight: 300;
-    font-size: 5vw;
+    /*font-size: 5vw;*/
 }
 p {
     margin: 1em 0;
@@ -535,40 +537,73 @@ div.results div.result > a > div > div > img{
     margin: auto;
 }
 div.topThree {
-    width: 800px;
-    height: 400px;
-    padding-bottom: 100px;
+    text-align: center;
+    padding: 25px 0;
 }
-
-div.topThree > h5 {
-    margin-left: 32%;
+div.topThree .friend{
+    display: inline-block;
+    vertical-align: middle;
+    padding: 50px 25px 0;
 }
-div.topThree > #firstFriend >p {
-    position: relative;
-    top: 40px;
-    left: 44%;
-}
-
-div.topThree > #secondFriend >p {
-    position: relative;
-    top: -130px;
-    left: 15%;
-}
-
-div.topThree > #thirdFriend >p {
-    position: relative;
-    top: -400px;
-    left: 73%;
-}
-
-div.topThree > div > div.topProfilePic {
+div.topThree .friend .avatar{
     width: 180px;
     height: 180px;
-    border-radius: 90px;
+    border-radius: 100%;
+    overflow: hidden;
+    position: relative;
+    color: white;
+    font-weight: 400;
+    font-size: 40px;
+    padding: 10px;
 }
-#firstFriend > div:after {
+div.topThree .friend .avatar span{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+    text-shadow: 0 0 10px black;
+}
+div.topThree .friend .avatar sup{
+    font-size: small;
+}
+div.topThree .friend.starred > .avatar::after{
     content: url('../images/winner-overlay.png');
-
+}
+div.topThree .friend.first{
+    padding:0;
+    margin: -25px 0 0;
+}
+div.topThree.category .friend{
+    padding: 0px 25px 0;
+}
+table.interaction{
+    background: rgb(240,240,240);
+    border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+    border: 1px solid rgb(208, 208, 208);
+}
+table.interaction th{
+    background: rgb(35,53,91);
+    color: white;
+    text-align: center;
+    padding: 5px;
+}
+table.interaction th:first-child{
+    border-top-left-radius: 10px
+}
+table.interaction th:last-child{
+    border-top-right-radius: 10px;
+}
+table.interaction tr:nth-child(odd){
+    background: rgb(235,235,235);
+}
+table.interaction tr td:first-child{
+    text-align: left;
+    padding: 5px;
+}
+table.interaction tr td{
+    text-align: center;
 }
 .loader:before,
 .loader:after,

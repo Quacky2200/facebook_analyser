@@ -15,7 +15,6 @@ class Results extends Page{
 	public $result;
 	private $URLMatch;
 	private $deleted = false;
-	private $shared = false;
 	public function isMatch($URL){
 		/*
 			This regex is to match an example like:
@@ -25,7 +24,7 @@ class Results extends Page{
 				/result/a8fjS8wK/delete
 				/result/a8fjS8wK/share
 		*/
-		return preg_match("/^(?:\/(public))?\/(?:result)\/(\w{8})(?:\/(delete|share))?[\/]?$/", $URL, $this->URLMatch);
+		return preg_match("/^(?:\/(public))?\/(?:result)\/(\w{8})(?:\/(delete|share|unshare))?[\/]?$/", $URL, $this->URLMatch);
 	}
 	public function deleteResult($resultID){
 		//Try deleting the result
@@ -36,34 +35,37 @@ class Results extends Page{
 			$stmt->execute(array(':result'=> $resultID));
 			//Show delete complete?
 			$this->deleted = true;
-		} catch (PDOException $e){/*Invalid request*/}
+		} catch (PDOException $e){
+			throw new Exception(400, "Invalid request");
+		}
 	}
-	public function shareResult($resultID){
+
+	public function changeVisibility($resultID, $visible){
 		//Try sharing the result
 		try{
-			echo "SHARE";
 			$dbh = Engine::getDatabase();
-			$sql = "UPDATE Results SET Visible=TRUE WHERE Result_ID = :result AND Result_ID IN (SELECT Result_ID FROM Result_History WHERE User_ID='" . User::instance()->id . "')";
+			$sql = "UPDATE Results SET Visible=$visible WHERE Result_ID = :result AND Result_ID IN (SELECT Result_ID FROM Result_History WHERE User_ID='" . User::instance()->id . "')";
 			$stmt = $dbh->prepare($sql);
 			$stmt->execute(array(':result'=> $resultID));
-			//Show the shared URL?
-			$this->shared = true;
-		} catch (PDOException $e){/*Invalid Request*/}
+		} catch (PDOException $e){
+			throw new Exception(400, "Invalid Request");
+		}
 	}
+	public $isViewingPublic;
 	public function run($template){
 		//Remove the whole string as the first result
 		array_shift($this->URLMatch);
 		//Get the database
 		$dbh = Engine::getDatabase();
 		//Are we visiting a public result?
-		$viewPublic = in_array("public", $this->URLMatch);
+		$this->isViewingPublic = in_array("public", $this->URLMatch);
 		$resultID = $this->URLMatch[1];
-		$isAction = in_array("delete", $this->URLMatch) || in_array("share", $this->URLMatch);
+		$isAction = (count($this->URLMatch) > 2 ? in_array($this->URLMatch[2], array("delete", "share", "unshare")) : false);
 		$isLoggedIn = User::instance()->isLoggedIn();
 		//Make sure we're only running actions with non-public requests.
-		if($viewPublic && !$isAction || $isLoggedIn){
+		if($this->isViewingPublic && !$isAction || $isLoggedIn){
 			$sql = "SELECT Result_ID, UNIX_TIMESTAMP( DATE ) \"Date\", Data, Visible FROM Results WHERE Result_ID = :result AND " . 
-				($viewPublic ? "Visible" : "Result_ID IN (SELECT Result_ID FROM Result_History WHERE User_ID='" . User::instance()->id . "')") . 
+				($this->isViewingPublic ? "Visible" : "Result_ID IN (SELECT Result_ID FROM Result_History WHERE User_ID='" . User::instance()->id . "')") . 
 				" LIMIT 1";
 			$stmt = $dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 			$stmt->execute(array(':result'=> $resultID));
@@ -71,12 +73,12 @@ class Results extends Page{
 			$result = $stmt->fetchObject('Result');
 			$result->Data = json_decode($result->Data, true);
 			if($result && $isAction){
-				if(in_array("delete", $this->URLMatch)){
+				if($this->URLMatch[2] == "delete"){
 					$this->deleteResult($resultID);
-				} else if (in_array("share", $this->URLMatch)){
-					$this->result = $result;
-					$this->shareResult($resultID);
-				}
+				} //else if (in_array($this->URLMatch[2], array("share", "unshare"))){
+					//$this->result = $result;
+					//$this->changeVisibility($resultID, $this->URLMatch[2] == "share");
+				//}
 			} else {
 				//Set the result
 				$this->result = $result;
@@ -84,7 +86,7 @@ class Results extends Page{
 		}
 	}
 	public function show($template){
-		include("section/header.php");
+		include("section/result_header.php");
 		include("section/middle_result.php");
 		include("section/footer.php");
 	}

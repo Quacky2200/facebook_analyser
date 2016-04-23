@@ -19,19 +19,30 @@ require(__DIR__ . '/top_account_header.php');
 				<h2 align='center' style='padding:100px 0;'>Your result was deleted</h2>
 				<p align='center' style='padding: 0 0 50px'><a <?php echo "href='" . Engine::getRemoteAbsolutePath((new Account())->getURL()) . "'"?>>Take me back to my account</a></p>
 			<?php die();
-			} else if ($this->shared){ ?>
-
-			<?php } ?>
+			}
+			if ($this->result->Visible && !$this->isViewingPublic){
+				//TODO: Output FB share button and make private
+				include(__DIR__ . '/middle_facebook_share_result.php');
+			}
+			/*else if (!$this->result->Visible && !$this->isViewingPublic){
+				//TODO: Show make public
+				<!--<a <?php echo "href='" . $this->result->Data['share-url'] . "/unshare'"?> title='Make this result private' class='button'>Make private</a>-->
+				echo "<a href='" . $this->result->Data['share-url'] . "/share' title='Make this result public' class='button'>Make public</a>";
+			}*/
+			?>
 			<div class="result information">
-				<h2 align="center">Your Result</h2>
-
-				<h6 align="center"><?php echo "Created " . $this->result->getTimeElapsedApproximate(time() - $this->result->Date);?></h6>
-				<div class="text">
-					<?php
-						//TODO: if viewing as public, change from 2nd person to 3rd person
-						//E.g. Your Result => Matthew's Result
-						echo $this->result->getReadable() . $this->result->getFacts();
-					?>
-				</div>
+			<h2 align='center'>Your Result</h2>
+			<h6 align='center'>Created <?php echo $this->result->getTimeDifferenceApproximate(time() - $this->result->Date) . " ago";?></h6>
+			<div class='text'>
+				<?php
+				//TODO: if viewing as public, change from 2nd person to 3rd person
+				//E.g. Your Result => Matthew's Result
+				echo $this->result->getReadable($this) . $this->result->getFacts($this);
+				if ($this->result->Visible && !$this->isViewingPublic){
+					//echo for the bottom AGAIN :)
+					include(__DIR__ . '/middle_facebook_share_result.php');
+				}
+				?>
+			</div>
 		</div>
 	</main>
