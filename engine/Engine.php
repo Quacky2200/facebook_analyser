@@ -2,7 +2,10 @@
 define("CONFIG", dirname(__FILE__) . "/config/config-data.json");
 class Engine{
 	private $currentTemplate;
+	private static $protocol, $host;
 	public function __construct(){
+		self::$protocol = (self::isSecure() ? "https://" : "http://");
+		self::$host = $_SERVER['SERVER_NAME'];
 		self::startSession();
 		$this->getRequiredVersion();
 		$this->getRequiredLibraries();
@@ -13,9 +16,9 @@ class Engine{
 	}
 	private function getRequiredLibraries(){
 		try{
-			require(__DIR__ . "/config/Config.php");
-			require(__DIR__ . "/structure/Template.php");
-			require(__DIR__ . "/structure/Page.php");
+			require("config/Config.php");
+			require("structure/Template.php");
+			require("structure/Page.php");
 		} catch(Exception $e){
 			ErrorHandler::primitiveError(500, "Cannot load Engine libraries", $e->getMessage());
 		}
@@ -68,51 +71,22 @@ class Engine{
 		return __DIR__;
 	}
 	public static function getRemoteDir($path){
-		/*	
-			This function parses a path to return a relative URL (except http:// or https://)
-			in attempt to transform a current relative URL such as "/home" or filepath 
-			(e.g. "C:\XAMPP\htdocs\index.php"). This then allows files such as CSS, JS, or
-			even pages relating to the website to be safely transformed into usable addresses.
-			This is mostly because webservers sometimes store your site in an annoying manner,
-			For example, the Cardiff Uni project server use your email username to create an 
-			alias that is used as your document root. This then affects the way our files and
-			pages can be retrieved. To relieve this kind of stress, I created this function to
-			do it all for us. My Cardiff Uni project alias is JamesM27 and would create a lot 
-			of pain when redirecting files and would treat the root folder as "/". Using 
-			DOCUMENT_ROOT would allow files to remove the local directory but with aliases it
-			created a problem when dealing with pages. I used PHP_SELF to get the relative 
-			running PHP script ("/JamesM27/Tests/index.php") and removed the filename allowing
-			me to get the directory ("/JamesM27/Tests/") so that pages such as "/home" would be
-			treated as "/JamesM27/Tests/home", and thereby removing the pain.
-
-			DOCUMENT_ROOT is where the host storing our stuff (e.g. C:\XAMPP\htdocs\).
-			We get the real path of where it is stored and replace everything there
-			with nothing so that something as basic as C:\XAMPP\htdocs\index.php
-			becomes \index.php
-				
-			PHP_SELF is the script that is currently running. As our engine is created 
-			remotely from (e.g. /index.php), we get then get the basename of PHP_SELF
-			which is "index.php" and replace it with nothing. That then leaves us with
-			"/" and allows us to know the working directory of the script. We then 
-			replace all the backwards slashes with forward slashes in case we're on
-			Windows. We then want to replace our 
-		*/
+		//Returns nothing if the path is already an absolute address
 		if(Engine::startsWith($path, "http://") || Engine::startsWith($path, "https://")) return $path;
-		$newPath = str_replace(realpath($_SERVER["DOCUMENT_ROOT"]), "", $path);
-		//Get the working directory from PHP_SELF
-		$workingDir = str_replace(basename($_SERVER["PHP_SELF"]), "", $_SERVER["PHP_SELF"]);
-		//Replace all the backslashes with forward slashes.
-		$newPath = str_replace("\\", "/",  $newPath);
-		//If we currently aren't in the working directory, add it.
-		if(!Engine::startsWith($newPath, $workingDir)) $newPath = str_replace("//", "/", $workingDir . $newPath);
-		//Give back our new path we created
-		return $newPath;
+		//Check that the path exists as a potential folder and/or file on the computer
+		if($path != "/" && realpath($path)){
+			//This must mean the directory is real, let's remove the place that it's from to create the online equivelent
+			$path = str_replace(realpath(__DIR__ . '/../'), "", realpath($path));
+		}
+		//Returns the new fixed relative address (e.g. /Hello/World & /Foo/Bar become /Hello/World/Foo/Bar).
+		return self::fixPath(dirname($_SERVER['SCRIPT_NAME']) . $path);
 	}
 	public static function getRemoteAbsolutePath($path){
-		//Get the fixed relative directory
-		$newPath = Engine::getRemoteDir($path);
-		//Return the absolute path (e.g. "http://localhost/home" or "https://project.cs.cf.ac.uk/JamesM27/Tests/home")
-		return (self::isSecure() ? "https://" : "http://") . $_SERVER["HTTP_HOST"] . $newPath;
+		//Returns nothing if the path is already an absolute address
+		if(Engine::startsWith($path, "http://") || Engine::startsWith($path, "https://")) return $path;
+		//Returns the absolute address of the provided path.
+		//(e.g. /Hello/World & /Foo/Bar become http://localhost/Hello/World/Foo/Bar)
+		return self::$protocol . self::$host . self::getRemoteDir($path);
 	}
 	public static function isSecure(){
 		//Thank you to this answer: http://stackoverflow.com/questions/1175096/how-to-find-out-if-youre-using-https-without-serverhttps#answer-2886224
@@ -121,8 +95,8 @@ class Engine{
 	public static function fixPath($path){
 		//Return a path that has missing starting and ending slashes
 		$path = (self::startsWith($path, "/") ? $path : "/" . $path);
-		$path = (self::endsWith($path, "/") ? $path : $path . "/");
-		return preg_replace("#/+#","/", $path);
+		//$path = (self::endsWith($path, "/") ? $path : $path . "/");
+		return preg_replace("#/+#", "/", preg_replace("#\\\\+#","/", $path));
 	}
 	public static function startsWith($haystack, $needle) {
 		// search backwards starting from haystack length characters from the end

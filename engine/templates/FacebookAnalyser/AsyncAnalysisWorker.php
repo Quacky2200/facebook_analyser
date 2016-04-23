@@ -60,10 +60,11 @@ class AsyncAnalysisWorker{
 				$this->data[self::OUT]['name'] = User::instance()->name;
 				//Generate a code we can use to show the result to the user
 				$this->data[self::OUT]['analysis-id'] = Engine::generateRandomString(8);
-				$this->data[self::OUT]['share-url'] = Engine::getRemoteAbsolutePath((new Results())->getURL() . $this->data[self::OUT]['analysis-id']);
+				$this->data[self::OUT]['share-url'] = Engine::getRemoteAbsolutePath('/public/' . (new Results())->getURL() . $this->data[self::OUT]['analysis-id']);
 				$this->data[self::OUT]['share-title'] = "Click to see my analysis!";
 				$this->data[self::OUT]['share-description'] =  User::instance()->name . " has shared a Facebook Analysis with you. Click to see their result or create your own... What type of Facebook user are you?";
-				$this->data[self::OUT]['share-image'] = $this->data[self::OUT]['share-url'] . "/image/";
+
+				$this->data[self::OUT]['share-image-url'] = Engine::getRemoteAbsolutePath((new Results())->getURL() . $this->data[self::OUT]['analysis-id'] . '/image/');
 			}
 		);
 	}
@@ -115,7 +116,7 @@ class AsyncAnalysisWorker{
 		//Start working
 		$this->startAsync();
 		$resultID = $this->data[self::OUT]['analysis-id'];
-		$resultURL = $this->data[self::OUT]['share-url'];
+		$resultURL = Engine::getRemoteAbsolutePath((new Results())->getURL() . $this->data[self::OUT]['analysis-id']);
 		//Get the database connection so we can upload the result
 		$this->dbh = Engine::getDatabase();
 		//Make sure that if we get any errors, that we get told about them.

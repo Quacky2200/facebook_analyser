@@ -681,6 +681,10 @@ div.footer {
     padding: 10px;
     color: #111323;
 }
+div.fb_iframe_widget{
+    transform: scale(1.8);
+    transform-origin: center right;
+}
 /*Layout for mobile*/
 /* Larger than mobile */
 

@@ -28,7 +28,7 @@ class Analyse extends Page{
 			$this->userExists = ($dbh->query( "SELECT * FROM Users WHERE User_ID=" . $this->user->id)->fetch(PDO::FETCH_ASSOC) != null);
 			if(!$forcingNewAnalysis && $this->userExists){
 				ob_clean();
-				header("Location: " . (New Account())->getURL());
+				header("Location: " . Engine::getRemoteAbsolutePath((New Account())->getURL()));
 				exit();
 			}
 			if (!$this->userExists){

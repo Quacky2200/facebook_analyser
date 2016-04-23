@@ -116,11 +116,10 @@ require(__DIR__ . '/AnalysisElement.php');
 			foreach ($this->interaction as $key=>$value){
 				if($value['mean_score'] < $meanDeviation) unset($this->interaction[$key]);
 			}
-			//Update our scores array for sorting the new results
-			$scores = array_column($this->interaction, 'mean_score');
-			//Finally sort out our results depending on the mean score (average interaction)
-			array_multisort($scores, SORT_DESC, $this->interaction);
-
+			//Sort all the left over people in the list from high to low mean (desc)
+			uasort($this->interaction, function($a, $b){
+				return $a['mean_score'] < $b['mean_score'];
+			});
 		}
 	}
 ?>
