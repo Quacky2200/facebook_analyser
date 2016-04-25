@@ -35,7 +35,17 @@ class User extends ReflectiveObject{
 				header("Location: " . Engine::getRemoteAbsolutePath(strtok($_SERVER["REQUEST_URI"],'?')));
 			}
 			//Get basic user profile information such as user id, name and email to test whether the session works
-			$this->importFromJson($this->getBasicUserProfile()->getGraphUser());
+			try{
+				$this->importFromJson($this->getBasicUserProfile()->getGraphUser());
+			} catch (Facebook\Exceptions\FacebookResponseException $e){
+				if(strpos($e->getMessage(), "The user has not authorized application") > -1){
+					Engine::clearSession();
+					header("Location: " . Engine::getRemoteAbsolutePath((new Home())->getURL()));
+				} else{
+					throw $e;
+				}
+				exit();
+			}
 			return true;
 		} else {
 			return false;
