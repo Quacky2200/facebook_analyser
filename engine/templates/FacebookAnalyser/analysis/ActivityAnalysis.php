@@ -12,8 +12,6 @@ require_once(__DIR__ . '/AnalysisElement.php');
 
 			foreach ($categories as $category){
 				$scannedData = $this->getIntervals($this->scanFacebookData($data, 'posts', $field)); 
-				//var_dump($scannedData);
-				// die();
 				$this->activity[$category] = array(
 					'mean' => $this->getArrayMean($scannedData),
 					'prediction' => $this->getPrediction($scannedData)
@@ -21,15 +19,7 @@ require_once(__DIR__ . '/AnalysisElement.php');
 			}
 			//Finally add all as an optional section
 			$allData = array_column($this->activity, 'mean');
-			/*var_dump($allData);
-				
-				$allData = $this->getIntervals(arsort($allData));
-				$this->activity['all'] = array(
-					'mean' => $this->getArrayMean($allData),
-					'prediction' => $this->getPrediction($allData)
-				);
-			*/
-				//die();
+
 			return $this->activity;
 		}
 		private function scanFacebookData($data, $category, $field){

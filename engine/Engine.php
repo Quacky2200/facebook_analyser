@@ -1,8 +1,7 @@
 <?php
 define("CONFIG", dirname(__FILE__) . "/config/config-data.json");
 class Engine{
-	private $currentTemplate;
-	private static $protocol, $host;
+	private static $currentTemplate, $protocol, $host;
 	public function __construct(){
 		self::$protocol = (self::isSecure() ? "https://" : "http://");
 		self::$host = $_SERVER['SERVER_NAME'];
@@ -10,8 +9,8 @@ class Engine{
 		$this->getRequiredVersion();
 		$this->getRequiredLibraries();
 		$this->getRequiredConfig();
-		$this->currentTemplate = self::getTemplate($this->getConfig()->TEMPLATE);
-		$this->useTemplate($this->currentTemplate);
+		self::$currentTemplate = self::getTemplate($this->getConfig()->TEMPLATE);
+		$this->useTemplate(self::$currentTemplate);
 		$this->run();
 	}
 	private function getRequiredLibraries(){
@@ -32,7 +31,7 @@ class Engine{
 	private function getRequiredConfig(){
 		try{
 			if(!$this->getConfig()->configExists()){
-				$this->currentTemplate = Engine::requireFile(__DIR__ . "/config/setup/main.php");
+				self::$currentTemplate = Engine::requireFile(__DIR__ . "/config/setup/main.php");
 				$this->run();
 				exit(0);
 			}
@@ -68,6 +67,7 @@ class Engine{
 		return $required;
 	}
 	public static function getLocalDir(){
+		//Returns the engine's running directory
 		return __DIR__;
 	}
 	public static function getRemoteDir($path){
@@ -99,11 +99,13 @@ class Engine{
 		return preg_replace("#/+#", "/", preg_replace("#\\\\+#","/", $path));
 	}
 	public static function startsWith($haystack, $needle) {
-		// search backwards starting from haystack length characters from the end
+		//Returns a boolean value whether the haystack starts with the given needle
+		//Search backwards starting from haystack length characters from the end
 		return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
 	}
 	public static function endsWith($haystack, $needle) {
-		// search forward starting from end minus needle length characters
+		//Returns a boolean value whether the haystack ends with the given needle
+		//Search forward starting from end minus needle length characters
 		return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== FALSE);
 	}
 	public static function generateRandomString($length = 10) {
@@ -117,14 +119,16 @@ class Engine{
 		return $randomString;
 	}
 	public function useTemplate($filename){
+		//Attempt to use the template given by the filename
 		$template = self::requireFile($filename);
 		if($template instanceof Template){
-			$this->currentTemplate = $template;
+			self::$currentTemplate = $template;
 		} else if (!($template instanceof Template)){
 			ErrorHandler::primitiveError(500, "Cannot initiate Template", $filename . "<br/>File above must use the Template class.");
 		}
 	}
 	public static function getTemplates(){
+		//Returns a list of templates (the templates file is main.php) within the templates directory
 		//Get an array of templates
 		$paths = glob(self::getLocalDir() . "/templates/*/main.php");
 		foreach($paths as &$path){
@@ -134,17 +138,22 @@ class Engine{
 		return $paths;
 	}
 	public static function getTemplate($Name){
+		//Returns the path of a template from the templates name (directory name in templates/)
 		$find = __DIR__ . "/templates/" . $Name . "/main.php";
 		return (file_exists($find) ? realpath($find) : null);
+	}
+	public static function getCurrentTemplate(){
+		//Returns the current template instance the engine is using
+		return (self::$currentTemplate instanceof Template ? self::$currentTemplate : null);
 	}
 	public function run(){
 		try{
 			//Traverse the Template if possible, otherwise the template is null;
-			if(is_null($this->currentTemplate)){
+			if(is_null(self::$currentTemplate)){
 				throw new Exception("No template found.");
 			} else {
 				$url = $this->fixPath(isset($_GET["current_engine_page"]) ? $_GET["current_engine_page"] : "");	
-				$this->currentTemplate->traverse($url);
+				self::$currentTemplate->traverse($url);
 			}
 		} catch (Exception $e) {
 			ErrorHandler::primitiveError(500, "Cannot run Engine", $e->getMessage());
@@ -154,6 +163,7 @@ class Engine{
 		session_start();
 	}
 	public static function clearSession(){
+		//Clears the users session
 		session_unset();
         session_destroy();
         $_SESSION[] = array();

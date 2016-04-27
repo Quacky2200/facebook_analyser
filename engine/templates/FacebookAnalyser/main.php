@@ -9,7 +9,6 @@ require("pages/Results.php");
 require("pages/ResultImage.php");
 require("pages/Error404.php");
 require("pages/Error500.php");
-
 class FacebookAnalyser extends Template{
 	public function getName(){
 		return __CLASS__;
@@ -40,6 +39,7 @@ class FacebookAnalyser extends Template{
 			$setup->sendStatus(true, array($setup->addName("template-config-error"), "error_message"=>$e->getMessage()));
 		}	
 	}
+
 	public function getPages(){
 		return array(
 			new Home(),

@@ -22,14 +22,37 @@ class Result{
 
 	*/
 	private $pageObj;
+	private $mustExist = array(
+		'activity',
+		'interaction',
+		'horoscope'
+	);
+	public function isCorrupt(){
+		foreach ($this->mustExist as $requirement){
+			if(!array_key_exists($requirement, $this->Data)){
+				return true;
+			}
+		}
+		return false;
+	}
+	public function getPronoun(){
+		return "Your";
+		$firstName = explode(" ", User::instance()->name)[0];
+		return ($this->pageObj->isViewingPublic ? (Engine::endsWith($firstName, "s") ? $firstName . "'" : $firstName . "'s") : "Your");
+	}
 	public function getReadable($pageObj){
 		$this->pageObj = $pageObj;
 		//Returns a user readable result based from the raw data.
-		return $this->topThree() . $this->topThreeCatergory() . "
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc elit mauris, pretium id nisl nec, interdum laoreet nulla. Donec quis pretium sapien. Mauris condimentum at sem id pharetra. Integer non dui at elit elementum dictum. Donec auctor libero at sapien pharetra semper. Nulla maximus metus eros, ac mattis leo fermentum nec. Sed urna sem, finibus pellentesque ipsum vel, pellentesque varius dolor.</p>
-			
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc elit mauris, pretium id nisl nec, interdum laoreet nulla. Donec quis pretium sapien. Mauris condimentum at sem id pharetra. Integer non dui at elit elementum dictum. Donec auctor libero at sapien pharetra semper. Nulla maximus metus eros, ac mattis leo fermentum nec. Sed urna sem, finibus pellentesque ipsum vel, pellentesque varius dolor.</p>
-		";
+		return $this->topThree() . $this->topThreeCatergory() . $this->getHoroscope();
+	}
+	public function getHoroscope(){
+		$strengths = $this->Data['horoscope']['zodiac']['strengths'];
+		$lastStrength = array_pop($strengths);
+		$strengths = count($strengths) ? implode($strengths, ", ") . ", and " . $lastStrength : $lastStrength;
+		$weaknesses = $this->Data['horoscope']['zodiac']['weaknesses'];
+		$lastWeakness = array_pop($weaknesses);
+		$weaknesses =  count($weaknesses) ? implode($weaknesses, ", ") . " and " . $lastWeakness : $lastWeakness;
+		return "<h5>" . $this->getPronoun() . " personality</h5><p>" .  $this->Data['horoscope']['zodiac']['description'] . "</p> <p><b>TLDR? You are " . strtolower($strengths) . " but at times you can also be " . strtolower($weaknesses) . ".</b></p><h5>Today's insight</h5><p>" . $this->Data['horoscope']['insight'] . "</p>";
 	}
 	public function getFacts($pageObj){
 		$this->pageObj = $pageObj;
@@ -41,8 +64,7 @@ class Result{
 				<div>" . 
 				$this->averagePost() . 
 				$this->tableOfInteraction() .
-				"
-					<!--<div align='center' style='padding: 10px'><div style='background: rgb(240,240,240);border-radius: 5px;display:inline-block; padding: 1vh 1vw; margin:auto'> No data is available at this time</div></div>-->
+				$this->horoscopeFact() . "
 				</div>
 			</div>
 		";
@@ -67,15 +89,15 @@ class Result{
 		//Returns the DOB used in a presentable HTML format
 		return "
 			<h5>Horoscope</h5>
-			<p>You must be ";
+			<p>" . $this->getPronoun() . " zodiac sign must be '" . $this->Data['horoscope']['zodiac']['name'] . "' because your date of birth falls between " . $this->Data['horoscope']['zodiac']['start-date'] . " and " . $this->Data['horoscope']['zodiac']['end-date'] . ".";
 	}
 	private function averagePost(){
 		return "
 			<h5>Activity</h5>
 			<p>An average created post takes " . $this->getTimeDifferenceApproximate(abs($this->Data['activity']['posts']['mean'])) . "</p>
-			<p>Your next post will most likely be created in " . $this->getTimeDifferenceApproximate(abs($this->Data['activity']['posts']['prediction'])) . "</p>
+			<p>" . $this->getPronoun() . " next post will most likely be created in " . $this->getTimeDifferenceApproximate(abs($this->Data['activity']['posts']['prediction'])) . "</p>
 			<p>An average created photo takes " . $this->getTimeDifferenceApproximate(abs($this->Data['activity']['photos']['mean'])) . "</p>
-			<p>Your next photo will most likely be in " . $this->getTimeDifferenceApproximate(abs($this->Data['activity']['photos']['prediction'])) . "</p>
+			<p>" . $this->getPronoun() . " next photo will most likely be in " . $this->getTimeDifferenceApproximate(abs($this->Data['activity']['photos']['prediction'])) . "</p>
 			<p>An average liked page takes " . $this->getTimeDifferenceApproximate(abs($this->Data['activity']['likes']['mean'])) . "</p>
 			<p>An average created video takes " . $this->getTimeDifferenceApproximate(abs($this->Data['activity']['videos']['mean'])) . "</p>
 			<p>An average liked movie takes " . $this->getTimeDifferenceApproximate(abs($this->Data['activity']['movies']['mean'])) . "</p>
@@ -87,7 +109,7 @@ class Result{
 		$userIDs = array_keys($this->Data['interaction']);
 		return "
 			<div class='topThree'>
-				<h5>Your top three friends!</h5>
+				<h5>" . $this->getPronoun() . " top three friends!</h5>
 				<div class='friend second'>
 					<div class='avatar' style='background: url(\"" . User::getAvatar($userIDs[1]) . "\") no-repeat; background-position: center; background-size: cover;'>
 						<span>2<sup>nd</sup></span>
@@ -111,9 +133,9 @@ class Result{
 	}
 	private function topThreeCatergory(){
 		//Returns three friends that are the first in the 3 categories in a presentable HTML format
-		$topLike = array('likes' => 0);
-		$topComment = array('comments' => 0);
-		$topTag = array('tags' => 0);
+		$topLike = null;
+		$topComment = null;
+		$topTag = null;
 		foreach($this->Data['interaction'] as $id=>$person){
 			if($topLike['likes'] < $person['likes']){
 				$topLike = array_merge($person, array('id'=>$id));
@@ -125,9 +147,9 @@ class Result{
 				$topTag = array_merge($person, array('id'=>$id));
 			}
 		}
-		return "
-			<div class='topThree category'>
-				<h5>Your top interactive friends!</h5>
+		$result = "";
+		if(!is_null($topLike)){
+			$result .= "
 				<div class='friend starred'>
 					<p><b>Likes</b></p>
 					<div class='avatar' style='background: url(\"" . User::getAvatar($topLike['id']) . "\") no-repeat; background-position: center; background-size: cover;'>
@@ -135,6 +157,10 @@ class Result{
 					</div>
 					<p>" . $topLike['name'] . "</p>
 				</div>
+			";
+		}
+		if(!is_null($topComment)){
+			$result .= "
 				<div class='friend starred'>
 				<p><b>Comments</b></p>
 					<div class='avatar' style='background: url(\"" . User::getAvatar($topComment['id']) . "\") no-repeat; background-position: center; background-size: cover;'>
@@ -142,6 +168,10 @@ class Result{
 					</div>
 					<p>" . $topComment['name'] . "</p>
 				</div>
+			";
+		}
+		if(!is_null($topTag)){
+			$result .= "
 				<div class='friend starred'>
 					<p><b>Tagged</b></p>
 					<div class='avatar' style='background: url(\"" . User::getAvatar($topTag['id']) . "\") no-repeat; background-position: center; background-size: cover;'>
@@ -149,8 +179,17 @@ class Result{
 					</div>
 					<p>" . $topTag['name'] . "</p>
 				</div>
-			</div>
-		";
+			";
+		}
+		if($result != ""){
+			$result = "
+				<div class='topThree category'>
+				<h5>" . $this->getPronoun() . " top interactive friends!</h5>
+				$result
+				</div>
+			";
+		}
+		return $result;
 	}
 	private function tableOfInteraction(){
 		//Returns a presentable HTML table of the user's friend interaction
@@ -161,7 +200,7 @@ class Result{
 			<table class='facts interaction' border='0'>
 				<tr>
 					<th></th>
-					<th>Likes</th>
+					<th title='$warning'>Likes<b>*</b></th>
 					<th title='$warning'>Comments<b>*</b></th>
 					<th title='$warning'>Tags<b>*</b></th>
 				</tr>

@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
+		<link rel="icon" type="image/icon" <?php echo "href='" . Engine::getRemoteAbsolutePath($template->getLocalDir() . "/public/favicon.ico") . "'";?>>
 		<meta name="description" content="FaceBook Analyser - What type of Facebook user are you?">
 		<meta name="keywords" content="facebook, analyser, cardiff, uni, university, group, project">
 		<meta name="viewport" content="width=720, maximum-scale=1.0" />

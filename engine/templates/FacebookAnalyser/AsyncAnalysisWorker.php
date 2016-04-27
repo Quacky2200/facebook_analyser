@@ -1,6 +1,7 @@
 <?php
 require(__DIR__ . '/analysis/PostInteraction.php');
 require(__DIR__ . '/analysis/ActivityAnalysis.php');
+require(__DIR__ . '/analysis/HoroscopeAnalysis.php');
 class AsyncAnalysisWorker{
 	//IN is the data we're getting from Facebook, INTO the analysis
 	const IN = "extracted";
@@ -53,6 +54,11 @@ class AsyncAnalysisWorker{
 				//Apply another analysis
 				$activity = new ActivityAnalysis();
 				$this->data[self::OUT]['activity'] = $activity->analyse($this->data[self::IN]);
+			},
+			"Analysing birthdate" => function(){
+				//Apply horoscope analysis
+				$horoscope = new HoroscopeAnalysis();
+				$this->data[self::OUT]['horoscope'] = $horoscope->analyse($this->data[self::IN]);
 			},
 			"Creating analysis" => function(){
 				//Save *other* information for the Facebook share button
@@ -122,7 +128,9 @@ class AsyncAnalysisWorker{
 		//Make sure that if we get any errors, that we get told about them.
 		$this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		//Insert the data into the results first
-		$this->dbh->exec("INSERT INTO Results (Result_ID, Date, Data, Visible) VALUES ('" . $resultID . "', NOW(), '" . json_encode($this->data[self::OUT]) . "', true)");
+		$sql = "INSERT INTO Results (Result_ID, Date, Data, Visible) VALUES (:result, NOW(), :data, true)";
+		$stmt = $this->dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+		$stmt->execute(array(':result'=>$resultID, ':data'=> json_encode($this->data[self::OUT])));
 		//Add the relationship between the result and the user
 		$this->dbh->exec("INSERT INTO Result_History (User_ID, Result_ID) VALUES ('" . User::instance()->id . "', '" . $resultID . "')");
 		//Tell the user that we're finished

@@ -1,7 +1,9 @@
 <?php
-require(__DIR__ . "/../ReflectiveObject.php");
+require(Engine::getLocalDir() . "/structure/ReflectiveObject.php");
 class User extends ReflectiveObject{
 	public $id, $name, $email;
+	const YEARS_TO_GO_BACK = 2;
+	const MOST_POST_AVG_PER_DAY = 10;
 	public static function instance(){
 		static $instance;
 		if(is_null($instance)) $instance = new User();
@@ -73,7 +75,7 @@ class User extends ReflectiveObject{
 	}
 	public function getUserPosts(){
 		//return $this->getFacebookData("posts.include_hidden(true){privacy,place,actions,name,description}");
-		return $this->getFacebookData('posts{privacy,name,description,message,status_type,likes{id,name},comments{from,message},created_time,message_tags,with_tags}');
+		return $this->getFacebookData('posts.limit(' . ((self::MOST_POST_AVG_PER_DAY * 7) * 52) * self::YEARS_TO_GO_BACK . '){privacy,name,description,message,status_type,likes{id,name},comments{from,message, created_time},created_time,message_tags,with_tags}');
 	}
 	public function getUserPhotos(){
 		return $this->getFacebookData("photos{tags,created_time}");

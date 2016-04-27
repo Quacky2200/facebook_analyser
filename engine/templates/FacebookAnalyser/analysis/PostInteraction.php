@@ -3,10 +3,10 @@ require(__DIR__ . '/AnalysisElement.php');
 	class PostInteraction extends AnalysisElement{
 
 		const LIKE_SCORE = 1;
-		const TAGGED_SCORE = 10;
-		const POSITIVE_COMMENT_SCORE = 10;
-		const NEGATIVE_COMMENT_SCORE = -5;
-		const NEUTRAL_COMMENT_SCORE = 5;
+		const TAGGED_SCORE = 2;
+		const POSITIVE_COMMENT_SCORE = 2;
+		const NEGATIVE_COMMENT_SCORE = -1;
+		const NEUTRAL_COMMENT_SCORE = 1;
 
 		private $POSITIVE_WORD_LIST;
 		private $NEGATIVE_WORD_LIST;
@@ -17,13 +17,16 @@ require(__DIR__ . '/AnalysisElement.php');
 			$this->POSITIVE_WORD_LIST = file(__DIR__ . '/dictionary/positive words EN-GB.txt');
 			$this->NEGATIVE_WORD_LIST = file(__DIR__ . '/dictionary/negative words EN-GB.txt');
 		}
-
+		private $post;
 		public function analyse($data){
 			foreach ($data['posts'] as $post){
-				$this->addLikes($post);
-				$this->addComments($post);
-				$this->addWithTags($post);
-				$this->addMessageTags($post);
+				if($post['created_time']->getTimestamp() > strtotime('-' . User::YEARS_TO_GO_BACK . ' year')){
+					$this->post = $post;
+					$this->addLikes($post);
+					$this->addComments($post);
+					$this->addWithTags($post);
+					$this->addMessageTags($post);
+				}
 			}
 			//Remove the user from the results if they are included.
 			if (array_key_exists(User::instance()->id, $this->interaction)) unset($this->interaction[User::instance()->id]);
@@ -41,7 +44,6 @@ require(__DIR__ . '/AnalysisElement.php');
 				);
 			}
 		}
-
 		private function addLikes($post){
 			if(!array_key_exists('likes', $post)) return;
 			foreach ($post['likes'] as $like){
@@ -102,7 +104,7 @@ require(__DIR__ . '/AnalysisElement.php');
 		private function sort(){
 			//Let's generate the mean for each person
 			foreach ($this->interaction as $id=>$scores){
-				$this->interaction[$id]['mean_score'] = ($scores['likes'] + $scores['comments'] + $scores['tags']) / 3; 
+				$this->interaction[$id]['mean_score'] = ($scores['likes'] + $scores['comments'] + $scores['tags']) / 3;
 			}
 			//Let's get the mean column from the array
 			$scores = array_column($this->interaction, 'mean_score');
@@ -122,4 +124,4 @@ require(__DIR__ . '/AnalysisElement.php');
 			});
 		}
 	}
-?>
+?> 
