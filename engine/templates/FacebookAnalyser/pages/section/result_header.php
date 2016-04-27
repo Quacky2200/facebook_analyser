@@ -3,11 +3,12 @@
 	<head>
 		<meta charset="utf-8">
 		<?php if($this->result){?>
-			<meta property="og:url"           <?php echo "content=\"" . $this->result->Data['share-url'] . "\"";?> />
-			<meta property="og:type"          content="article" />
-			<meta property="og:title"         <?php echo "content=\"" . $this->result->Data['share-title'] . "\"";?> />
-			<meta property="og:description"   <?php echo "content=\"" . $this->result->Data['share-description'] . "\"";?> />
-			<meta property="og:image"         <?php echo "content=\"" . $this->result->Data['share-image-url'] . "\"";?> />
+			<link rel="icon" type="image/icon" <?php echo "href='" . Engine::getRemoteAbsolutePath($template->getLocalDir() . "/public/favicon.ico") . "'";?>>
+			<meta name="og:url" <?php echo "content=\"" . $this->result->Data['share-url'] . "\"";?> />
+			<meta name="og:type" content="article" />
+			<meta name="og:title" <?php echo "content=\"" . $this->result->Data['share-title'] . "\"";?> />
+			<meta name="og:description" <?php echo "content=\"" . $this->result->Data['share-description'] . "\"";?> />
+			<meta name="og:image" <?php echo "content=\"" . $this->result->Data['share-image-url'] . "\"";?> />
 		<?php } ?>
 		<meta name="description" content="FaceBook Analyser - What type of Facebook user are you?">
 		<meta name="keywords" content="facebook, analyser, cardiff, uni, university, group, project">
