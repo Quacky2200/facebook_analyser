@@ -6,8 +6,19 @@ class Account extends Page{
 	public function getURL(){
 		return "/account/";
 	}
+
+	private $URLMatch;
+
 	public function isMatch($URL){
-		return $URL == $this->getURL();
+		$URLMatch;
+
+		$match = preg_match("/^\/(account)\/(delete)?$/", $URL, $URLMatch);
+
+		if (isset($URLMatch[2]) && $URLMatch[2] == "delete") {
+			$this->deleteResultAll();
+		}
+
+		return $match;
 	}
 	public function run($template){
 		require("login.php");
@@ -19,6 +30,22 @@ class Account extends Page{
 		include("section/middle_account.php");
 		include("section/footer.php");
 	}
+
+	private function deleteResultAll() {
+		echo "<span class='deleteMsg'>All results deleted successfuly</span>";
+		try {
+			$dbh = Engine::getDatabase();
+			$sql = "DELETE FROM `results` WHERE Result_ID IN (SELECT Result_ID FROM result_history WHERE USER_ID = '" . User::instance()->id . "');";
+			$stmt = $dbh->prepare($sql);
+			$stmt->execute();
+			//Show delete complete?
+			$this->deleted = true;
+		} catch (PDOException $e){
+			throw new Exception(400, "Invalid request");
+		}
+	}
+
+
 	public function getAllResultHistory(){
 		//Get the PDO instance (it's created by the engine for us)
 		$dbh = Engine::getDatabase();
@@ -62,6 +89,9 @@ class Account extends Page{
 			</div>
 			<?php
 		}
+
+		echo "<a class='deleteResults' href='" . Engine::getRemoteAbsolutePath($this->getURL()) . "delete'; title='Delete this result'>Delete results</a>";
+
 	}
 }
 ?>

@@ -85,7 +85,7 @@ class Results extends Page{
 					$this->deleteResult($resultID);
 					//Change the interface to show that it was deleted.
 					$this->resultInterface = "middle_result_deleted.php"; 
-				}
+				} 
 			}
 		}
 	}

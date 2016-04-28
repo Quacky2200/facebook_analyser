@@ -672,3 +672,16 @@ div.fb_iframe_widget{
 ::-webkit-scrollbar-track {
     margin: 2px 0;
 }
+
+/*
+.deleteResults {
+    text-decoration: none; 
+    font-size: 12px;
+    margin-bottom: 100px;
+    background-color: #253A49; /* delete button colour - may need to change in future 
+    border-radius: 4px;
+    position: relative;
+
+    
+}
+*/
