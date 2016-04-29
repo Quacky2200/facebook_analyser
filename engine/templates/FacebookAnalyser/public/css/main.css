@@ -207,6 +207,28 @@ a.fblogin i.fa.fa-facebook {
     padding: 0em 1.2em 0em 1.5em;
     border-right: 1px solid rgba(0, 0, 0, 0.2);
 }
+a.deleteButton {
+    display: inline-block;
+    background: #fe5757;
+    color: white;
+    border: none;
+    border-radius: 0.5em;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    padding: 0em;
+    text-decoration: none;
+    box-shadow: 0 0 0px -5px #000000, inset 0 0px 10px -1px #133783;
+    transition: box-shadow 500ms !important, transform 120ms !important;
+    margin-right: 8px;
+}
+a.deleteButton span {
+    display: table-cell;
+    padding: 0.8em;
+}
+a.deleteButton i.fa.fa-facebook {
+    display: table-cell;
+    padding: 0em 1.2em 0em 1.5em;
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
+}
 nav.topbar {
     display: block;
     width: 100%;
@@ -590,6 +612,12 @@ div.fb_iframe_widget{
         padding: 10px;
     }
     a.fblogin i.fa.fa-facebook {
+        padding: 0 15px 0 18px;
+    }
+    a.deleteButton span {
+        padding: 10px;
+    }
+    a.deleteButton i.fa.fa-facebook {
         padding: 0 15px 0 18px;
     }
 }

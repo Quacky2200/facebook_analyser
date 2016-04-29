@@ -10,20 +10,18 @@ class Account extends Page{
 	private $URLMatch;
 
 	public function isMatch($URL){
-		$URLMatch;
-
-		$match = preg_match("/^\/(account)\/(delete)?$/", $URL, $URLMatch);
-
-		if (isset($URLMatch[2]) && $URLMatch[2] == "delete") {
-			$this->deleteResultAll();
-		}
+		$match = preg_match("/^\/(account)\/(delete)?$/", $URL, $this->URLMatch);
 
 		return $match;
+
 	}
+
 	public function run($template){
 		require("login.php");
 	}
+
 	private $template;
+
 	public function show($template){
 		$this->template = $template;
 		include("section/header.php");
@@ -31,24 +29,29 @@ class Account extends Page{
 		include("section/footer.php");
 	}
 
-	private function deleteResultAll() {
-		echo "<span class='deleteMsg'>All results deleted successfuly</span>";
+	private function deleteResults($dbh) {
 		try {
-			$dbh = Engine::getDatabase();
 			$sql = "DELETE FROM `results` WHERE Result_ID IN (SELECT Result_ID FROM result_history WHERE USER_ID = '" . User::instance()->id . "');";
 			$stmt = $dbh->prepare($sql);
 			$stmt->execute();
-			//Show delete complete?
-			$this->deleted = true;
 		} catch (PDOException $e){
 			throw new Exception(400, "Invalid request");
 		}
 	}
 
+	private function deleteAccount($dbh) {
+		$this->deleteResults($dbh);
+		try {
+			$sql = "DELETE FROM `users` WHERE USER_ID = '" . User::instance()->id . "';";
+			$stmt = $dbh->prepare($sql);
+			$stmt->execute();
+			echo "All your records are being deleted from our database...please wait <meta http-equiv='refresh' content='3;url=". User::instance()->getFacebookDeAuthURL(Engine::getRemoteAbsolutePath((new Home())->getURL())) ."'";
+		} catch (PDOException $e){
+			throw new Exception(400, "Invalid request");
+		} 
+	}
 
-	public function getAllResultHistory(){
-		//Get the PDO instance (it's created by the engine for us)
-		$dbh = Engine::getDatabase();
+	public function getAllResultHistory($dbh){
 		//Insert a new analysis button
 		?>
 		<div class='result'>
@@ -89,9 +92,6 @@ class Account extends Page{
 			</div>
 			<?php
 		}
-
-		echo "<a class='deleteResults' href='" . Engine::getRemoteAbsolutePath($this->getURL()) . "delete'; title='Delete this result'>Delete results</a>";
-
 	}
 }
 ?>

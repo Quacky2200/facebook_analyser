@@ -8,7 +8,9 @@
 		<?php if(User::instance()->isLoggedIn()){ ?>
 			<ul align='right'>
 				<li>
-					<?php echo "<a class='fblogin' style='float:right' href='" . Engine::getRemoteAbsolutePath((new Account())->getURL()) . "'>Account</a>";?>
+					<?php echo "<a class='fblogin' style='float:right' href='" . Engine::getRemoteAbsolutePath((new Account())->getURL()) . "'>Account</a>
+					 <a class='deleteButton' style='float:right' href='" . Engine::getRemoteAbsolutePath((new Account())->getURL()) . "delete'>Delete account</a>";
+					?>
 				</li>
 				<li>
 					<?php echo "<a class='fblogin' style='float:right' href='" . User::instance()->getFacebookDeAuthURL(Engine::getRemoteAbsolutePath((new Home())->getURL())) . "'>Logout</a>";?>
