@@ -207,6 +207,35 @@ a.fblogin i.fa.fa-facebook {
     padding: 0em 1.2em 0em 1.5em;
     border-right: 1px solid rgba(0, 0, 0, 0.2);
 }
+a#delete-account{
+    display:inline-block; padding: 10px;border-radius: 10px;color:red;background: rgb(230,230,230);
+}
+form#delete-account #controls input[type='submit']{
+    background: #EF0000;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 1em;
+    font-family: "Open Sans", sans-serif, arial;
+    font-weight: 300;
+}
+form#delete-account #controls{
+    width: 80%;
+    max-width: 800px;
+    margin: auto;
+    text-align: center;
+}
+form#delete-account #controls a,
+form#delete-account #controls a:link,
+form#delete-account #controls a:hover,
+form#delete-account #controls a:active,
+form#delete-account #controls a:visited{
+    padding: 10px;
+    border-radius: 10px;
+    background: rgb(230,230,230);
+    color: black;
+}
 a.deleteButton {
     display: inline-block;
     background: #fe5757;
@@ -220,7 +249,7 @@ a.deleteButton {
     transition: box-shadow 500ms !important, transform 120ms !important;
     margin-right: 8px;
 }
-a.deleteButton span {
+/*a.deleteButton span {
     display: table-cell;
     padding: 0.8em;
 }
@@ -228,7 +257,7 @@ a.deleteButton i.fa.fa-facebook {
     display: table-cell;
     padding: 0em 1.2em 0em 1.5em;
     border-right: 1px solid rgba(0, 0, 0, 0.2);
-}
+}*/
 nav.topbar {
     display: block;
     width: 100%;

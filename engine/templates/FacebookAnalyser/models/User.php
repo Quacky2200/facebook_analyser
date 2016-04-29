@@ -34,7 +34,7 @@ class User extends ReflectiveObject{
 			//as long as we have the access token either by request or by session, we can use the session
 			if(is_null($this->getToken())){
 				$this->setToken((string)$accessToken);
-				header("Location: " . Engine::getRemoteAbsolutePath(strtok($_SERVER["REQUEST_URI"],'?')));
+				header("Location: " . Engine::getRemoteAbsolutePath((new Analyse())->getURL()));
 			}
 			//Get basic user profile information such as user id, name and email to test whether the session works
 			try{

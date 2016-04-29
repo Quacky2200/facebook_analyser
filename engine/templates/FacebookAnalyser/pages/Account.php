@@ -11,9 +11,7 @@ class Account extends Page{
 
 	public function isMatch($URL){
 		$match = preg_match("/^\/(account)\/(delete)?$/", $URL, $this->URLMatch);
-
 		return $match;
-
 	}
 
 	public function run($template){
@@ -25,13 +23,20 @@ class Account extends Page{
 	public function show($template){
 		$this->template = $template;
 		include("section/header.php");
-		include("section/middle_account.php");
+		if(isset($_POST['action']) && $_POST['action'] == "confirm" && isset($_POST['confirm']) && $_POST['confirm'] == "Yes, delete my account"){
+			$this->deleteAccount(Engine::getDatabase());
+		}
+		if (isset($this->URLMatch[2]) && $this->URLMatch[2] == "delete") {
+			include("section/middle_user_deletion.php");
+		} else {
+			include("section/middle_account.php");
+		}
 		include("section/footer.php");
 	}
 
 	private function deleteResults($dbh) {
 		try {
-			$sql = "DELETE FROM `results` WHERE Result_ID IN (SELECT Result_ID FROM result_history WHERE USER_ID = '" . User::instance()->id . "');";
+			$sql = "DELETE FROM Result_History WHERE USER_ID='" . User::instance()->id . "'";
 			$stmt = $dbh->prepare($sql);
 			$stmt->execute();
 		} catch (PDOException $e){
@@ -42,10 +47,11 @@ class Account extends Page{
 	private function deleteAccount($dbh) {
 		$this->deleteResults($dbh);
 		try {
-			$sql = "DELETE FROM `users` WHERE USER_ID = '" . User::instance()->id . "';";
+			$sql = "DELETE FROM Users WHERE USER_ID='" . User::instance()->id . "'";
 			$stmt = $dbh->prepare($sql);
 			$stmt->execute();
-			echo "All your records are being deleted from our database...please wait <meta http-equiv='refresh' content='3;url=". User::instance()->getFacebookDeAuthURL(Engine::getRemoteAbsolutePath((new Home())->getURL())) ."'";
+			Engine::clearSession();
+			header('Location: ' . Engine::getRemoteAbsolutePath((new Home())->getURL()));
 		} catch (PDOException $e){
 			throw new Exception(400, "Invalid request");
 		} 

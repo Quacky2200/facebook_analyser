@@ -30,7 +30,7 @@ class FacebookAnalyser extends Template{
 			$dbh->exec("CREATE TABLE Result_History ( History_ID int(32) NOT NULL, User_ID VARCHAR(64) NOT NULL, Result_ID VARCHAR(64) NOT NULL, PRIMARY KEY (History_ID)) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
 			$dbh->exec("ALTER TABLE Result_History ADD UNIQUE (Result_ID);");
 			//create relationships between tables
-			$dbh->exec("ALTER TABLE Result_History ADD CONSTRAINT FOREIGN KEY (User_ID) REFERENCES Users(User_ID) ON DELETE CASCADE;ALTER TABLE Result_History ADD CONSTRAINT FOREIGN KEY (User_ID) REFERENCES Users(User_ID) ON DELETE CASCADE");
+			$dbh->exec("ALTER TABLE Result_History ADD CONSTRAINT FOREIGN KEY (User_ID) REFERENCES Users(User_ID) ON DELETE CASCADE;ALTER TABLE Result_History ADD CONSTRAINT FOREIGN KEY (User_ID) REFERENCES Users(User_ID) ON DELETE CASCADE;ALTER TABLE Results ADD FOREIGN KEY (Result_ID) REFERENCES Result_History(Result_ID) ON DELETE CASCADE ON UPDATE CASCADE;");
 			$dbh->exec("ALTER TABLE Result_History ADD FOREIGN KEY (Result_ID) REFERENCES Results(Result_ID) ON DELETE CASCADE ON UPDATE RESTRICT;");
 			//Make sure we increment history
 			$dbh->exec("ALTER TABLE Result_History MODIFY History_ID int(32) NOT NULL AUTO_INCREMENT;");
