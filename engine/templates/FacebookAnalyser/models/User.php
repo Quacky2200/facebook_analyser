@@ -86,12 +86,6 @@ class User extends ReflectiveObject{
 	public function getUserTagged(){
 		return $this->getFacebookData("tagged");
 	}
-	public function getUserFriends(){
-		return $this->getFacebookData("friends{about,address,age_range,birthday,education,email}");
-	}
-	public function getUserFriendCount(){
-		return $this->getFacebookData("friends");
-	}
 	public function getUserMovies(){
 		return $this->getFacebookData("movies{name,created_time}");
 	}

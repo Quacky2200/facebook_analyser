@@ -15,5 +15,15 @@ class ReflectiveObject{
 			$this->{$key} = $value;
 		}
 	}
+	public function copy($array, $obj){
+		//Copy associative array into object
+		foreach ($array as $key=>$value){
+			$obj->{$key} = $value;
+		}
+	}
+	public function copyObj($obj1, $obj2){
+		//Copy object 1 object properties to object 2's properties
+		$this->copy($this->export($obj1), $obj2);
+	}
 }
 ?>

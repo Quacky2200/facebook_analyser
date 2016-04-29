@@ -5,7 +5,6 @@ require("models/Result.php");
 require("pages/Home.php");
 require("pages/Account.php");
 require("pages/Analyse.php");
-require("pages/Results.php");
 require("pages/ResultImage.php");
 require("pages/Error404.php");
 require("pages/Error500.php");
@@ -45,7 +44,7 @@ class FacebookAnalyser extends Template{
 			new Home(),
 			new Account(),
 			new Analyse(),
-			new Results(),
+			new Result(),
 			new ResultImage(),
 			new Error404()
 		);
