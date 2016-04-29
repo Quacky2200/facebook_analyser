@@ -66,11 +66,11 @@ class AsyncAnalysisWorker{
 				$this->data[self::OUT]['name'] = User::instance()->name;
 				//Generate a code we can use to show the result to the user
 				$this->data[self::OUT]['analysis-id'] = Engine::generateRandomString(8);
-				$this->data[self::OUT]['share-url'] = Engine::getRemoteAbsolutePath('/public/' . (new Results())->getURL() . $this->data[self::OUT]['analysis-id']);
+				$this->data[self::OUT]['share-url'] = Engine::getRemoteAbsolutePath((new Result())->getURL() . $this->data[self::OUT]['analysis-id']);
 				$this->data[self::OUT]['share-title'] = "Click to see my analysis!";
 				$this->data[self::OUT]['share-description'] =  User::instance()->name . " has shared a Facebook Analysis with you. Click to see their result or create your own... What type of Facebook user are you?";
 
-				$this->data[self::OUT]['share-image-url'] = Engine::getRemoteAbsolutePath((new Results())->getURL() . $this->data[self::OUT]['analysis-id'] . '/image/');
+				$this->data[self::OUT]['share-image-url'] = Engine::getRemoteAbsolutePath((new Result())->getURL() . $this->data[self::OUT]['analysis-id'] . '/image/');
 			}
 		);
 	}
@@ -122,17 +122,9 @@ class AsyncAnalysisWorker{
 		//Start working
 		$this->startAsync();
 		$resultID = $this->data[self::OUT]['analysis-id'];
-		$resultURL = Engine::getRemoteAbsolutePath((new Results())->getURL() . $this->data[self::OUT]['analysis-id']);
-		//Get the database connection so we can upload the result
-		$this->dbh = Engine::getDatabase();
-		//Make sure that if we get any errors, that we get told about them.
-		$this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		//Insert the data into the results first
-		$sql = "INSERT INTO Results (Result_ID, Date, Data, Visible) VALUES (:result, NOW(), :data, true)";
-		$stmt = $this->dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-		$stmt->execute(array(':result'=>$resultID, ':data'=> json_encode($this->data[self::OUT])));
-		//Add the relationship between the result and the user
-		$this->dbh->exec("INSERT INTO Result_History (User_ID, Result_ID) VALUES ('" . User::instance()->id . "', '" . $resultID . "')");
+		$resultURL = Engine::getRemoteAbsolutePath((new Result())->getURL() . $resultID);
+		//add the result to the database
+		Result::create($resultID, $this->data[self::OUT]);
 		//Tell the user that we're finished
 		$this->echoImplicit("All finished!");
 		//Stop processing the page and redirect the user

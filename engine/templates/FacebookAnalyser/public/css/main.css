@@ -302,7 +302,8 @@ div.results div.result .actions {
     bottom: auto;
     top: 0;
     text-align: right;
-    padding: 5px;
+    padding: 0 0.25em;
+    font-size:1.5em;
 }
 div.results div.result .actions a{
     display: inline-block;line-height: 10px;vertical-align: middle;

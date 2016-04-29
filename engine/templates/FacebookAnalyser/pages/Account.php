@@ -40,16 +40,56 @@ class Account extends Page{
 		//For all of the analyses, we give a link and the time created.
 		foreach($query->fetchALL(PDO::FETCH_CLASS, 'Result') as $obj){
 			$timeSinceCreation = $obj->getTimeDifferenceApproximate(time() - $obj->Date);
-			$timeSinceCreation = (!$timeSinceCreation ? " just now" : $timeSinceCreation . " ago");
-			$resultLink = Engine::getRemoteAbsolutePath((new Results())->getURL() . $obj->Result_ID);
+			$timeSinceCreation = (stripos($timeSinceCreation, "second") > -1 || !$timeSinceCreation ? " just now" : $timeSinceCreation . " ago");
+			$resultLink = Engine::getRemoteAbsolutePath($obj->getURL());
 			$resultActionDelete = null;
 			$resultActionShare = null;
 			?>
-			<div class="result">
+			<script>
+				function updateActions(sender){
+					//if(this === window) return;
+					//alert($(sender).html());
+					var url = $(sender).parentsUntil('div.result span.actions').attr('action');
+					$.ajax({
+						type: 'POST',
+						url: url,
+						data: {'action':$(sender).attr('data-action')},
+						complete: function(){url = this.url;},
+						success: function(data){
+							if($('.results', $(data)) == null){
+								alert(window.location.href + " \n" + url)
+								alert("We were unable to fulfil your request.");
+								return;
+							}
+							updateResults();
+						}
+					});
+				}
+				function updateResults(){
+					$.ajax({
+						type: 'GET',
+						url: window.location.href,
+						success: function(data){
+							if($('.results', $(data)) == null){return};
+							if($('.results', $(data)) !== $('.results')){
+								$('.result').remove();
+								$('.results').append($('.result', $(data)));
+							}
+						}
+					});
+				}
+				setInterval(updateResults, 30000);
+			</script>
+			<div class="result" <?php echo "id='" . $obj->Result_ID . "'";?>>
 				<span class="actions">
-					<a <?php echo "href='" . $resultLink . "/delete'";?> title='Delete this result'>
-						<img <?php echo "src='" . Engine::getRemoteAbsolutePath($this->template->getLocalDir() . "/public/images/delete.png") . "'";?>>
-					</a>
+					<form method='post' <?php echo "action='" . $resultLink . "'";?>>
+						<a href='javascript:void(0);' <?php echo "data-action='make-" . ($obj->Visible ? "private" : "public") . "'";?> <?php echo "data-action-done='We have now made the result " . ($obj->Visible ? "private" : "public") . ".'";?> onclick='updateActions(this);' title='Change the result visibility'>
+							<i <?php echo "class=\"fa fa-" . ($obj->Visible ? "lock" : "unlock-alt") . "\"";?> aria-hidden="true"></i>
+						</a>
+						<a href='javascript:void(0);' data-action='delete' data-action-done='We have deleted this result.' onclick='updateActions(this);' title='Delete this result'>
+							<i class="fa fa-times" aria-hidden="true"></i>
+						</a>
+					</form>
 				</span>
 				<a <?php echo "href='" . $resultLink . "'";?> title='View this result'>
 					<div>

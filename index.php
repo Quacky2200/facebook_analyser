@@ -1,8 +1,4 @@
 <?php
-$time = microtime();
-$time = explode(' ', $time);
-$time = $time[1] + $time[0];
-$start = $time;
 class ErrorHandler{
 	private static $errorHTML = "
 		<html>
@@ -58,16 +54,4 @@ ErrorHandler::start();
 
 (@include_once "engine/Engine.php") or ErrorHandler::primitiveError(500, "Missing Engine class.");
 $engine = new Engine();
-//TODO: Remove debugging footer when project is complete
-$time = microtime();
-$time = explode(' ', $time);
-$time = $time[1] + $time[0];
-$finish = $time;
-$total_time = round(($finish - $start), 4);
-function convert($size)
-{
-    $unit=array('b','kb','mb','gb','tb','pb');
-    return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i];
-}
 ?>
-<div class="footer">Finished in <?php echo $total_time;?> seconds using <?php echo convert(memory_get_usage(false));?> w/ <?php echo PHP_VERSION;?></div>
